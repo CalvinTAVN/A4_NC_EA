@@ -2,12 +2,12 @@ Assignment 4 readme File
 
 ------------------------------------------------------------------------
 Student 1: What is your name?
-
+Calvin Nguyen
 
 
 ------------------------------------------------------------------------
 Student 2: What is your name?
-
+Alex Eng
 
 
 ------------------------------------------------------------------------
@@ -119,9 +119,9 @@ the error manifests itself or is "noticed" by the client.
 ===============================================================
          ./bdtBad1        BDT_insertPath(char* path)
 ---------------------------------------------------------------
-         ./bdtBad2        BDT_newNode()
+         ./bdtBad2        BDT_newNode(Node_T parent, char* dir)
 ---------------------------------------------------------------
-         ./bdtBad3        
+         ./bdtBad3        BDT_unlinkParentToChild(Node_T parent, Node_T child)
 ===============================================================
 
 ------------------------------------------------------------------------
@@ -133,14 +133,21 @@ what is the fundamental difference with trying to debug this
 executable in gdb versus the first three (Hint: your answer should
 have nothing to do with the program's code.):
 
-
+The fundamental difference with trying to debug this executable in gdb
+vs the other 3 is that the output for bdtBad4 is unpredictable since it
+is accessing old and arbitrary memory which comes out as a random output for
+multiple lines including line 100 on the bdt_client.c.
 
 For bdtBad5, you do not have to find the bug and simply identifying
 the bug is insufficient to earn the extra credit. Instead, discuss how
 the program could crash within the DynArray module, which we promise is
 correct, while executing a callback function that is, itself, correct:
 
-
+The bug was in the BDT_toString where it created a new DynArray but with count + 1.
+This is a problem because we then apply the mapping method to an nonexistent node.
+With that being said, the program could crash within the DynArray Module if the module
+is not used correctly. For example, in this situation, we created a new DynArray with
+count + 1 when it should be count instead.
 
 ------------------------------------------------------------------------
 What are your critiques of the given DT implementations, as
