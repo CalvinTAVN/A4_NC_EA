@@ -30,6 +30,13 @@ boolean CheckerDT_Node_isValid(Node_T n) {
 
       /* Sample check that parent's path must be prefix of n's path */
       ppath = Node_getPath(parent);
+      /*changed*/
+      if (ppath == NULL)
+      {
+         fprintf(stderr, "parents path is NULL\n");
+         return FALSE;
+      }
+      
       i = strlen(ppath);
       if(strncmp(npath, ppath, i)) {
          fprintf(stderr, "P's path is not a prefix of C's path\n");
@@ -60,6 +67,8 @@ boolean CheckerDT_Node_isValid(Node_T n) {
 static boolean CheckerDT_treeCheck(Node_T n) {
    size_t c;
 
+   size_t i;
+   
    if(n != NULL) {
 
       /* Sample check on each non-root node: node must be valid */
@@ -72,11 +81,24 @@ static boolean CheckerDT_treeCheck(Node_T n) {
       {
          Node_T child = Node_getChild(n, c);
 
-         /* if recurring down one subtree results in a failed check
+         /*changed*/
+         if (Node_getNumChildren(n) > 1)
+         {
+            for (i = 0; i < Node_getNumChildren(n) - 1; i++)
+            {
+               if (n->children->uLength)    /*->ppvArray[i]->path)*/
+               {
+               }
+            }
+         }
+
+            /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          if(!CheckerDT_treeCheck(child))
             return FALSE;
       }
+
+      
    }
    return TRUE;
 }
