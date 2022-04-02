@@ -16,6 +16,7 @@ boolean CheckerDT_Node_isValid(Node_T n) {
    const char* npath;
    const char* ppath;
    const char* rest;
+   /*const char* compareParent;*/
    size_t i;
 
    /* Sample check: a NULL pointer is not a valid node */
@@ -24,7 +25,14 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       return FALSE;
    }
 
+
+   /*changed*/
    parent = Node_getParent(n);
+   /*compareParent = strncpy(compareParent, Node_getPath(n), strlen(Node_getPath(n))-2);*/
+   /*if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0){
+      fprintf(stderr, "child's path is not the same as parent's path");
+      return FALSE;
+      }*/
    if(parent != NULL) {
       npath = Node_getPath(n);
 
@@ -36,7 +44,10 @@ boolean CheckerDT_Node_isValid(Node_T n) {
          fprintf(stderr, "parents path is NULL\n");
          return FALSE;
       }
-      
+      if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0){                                       
+     fprintf(stderr, "child's path is not the same as parent's path");                                                               
+    return FALSE;                                                                                                                   
+           }
       i = strlen(ppath);
       if(strncmp(npath, ppath, i)) {
          fprintf(stderr, "P's path is not a prefix of C's path\n");
@@ -46,6 +57,7 @@ boolean CheckerDT_Node_isValid(Node_T n) {
          must have no further '/' characters */
       rest = npath + i;
       rest++;
+      char *test = strstr(rest, "/");
       if(strstr(rest, "/") != NULL) {
          fprintf(stderr, "C's path has grandchild of P's path\n");
          return FALSE;
@@ -68,6 +80,8 @@ static boolean CheckerDT_treeCheck(Node_T n) {
    size_t c;
 
    size_t i;
+
+   Node_T p;
    
    if(n != NULL) {
 
@@ -82,15 +96,18 @@ static boolean CheckerDT_treeCheck(Node_T n) {
          Node_T child = Node_getChild(n, c);
 
          /*changed*/
-         if (Node_getNumChildren(n) > 1)
-         {
-            for (i = 0; i < Node_getNumChildren(n) - 1; i++)
-            {
-               if (n->children->uLength)    /*->ppvArray[i]->path)*/
+         /*checking if child nodes are in lexicographic*/
+            if (Node_getNumChildren(n) > 1){
+               for (i = 0; i < Node_getNumChildren(n) - 1; i++)
                {
+                  p = Node_getChild(n, i);
+                  if(strcmp(Node_getPath(p), Node_getPath(Node_getChild(n, i + 1))) > 1){
+                     fprintf(stderr, "Tree is not in lexicographical order");
+                     return FALSE;
+                  }
                }
             }
-         }
+         
 
             /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
