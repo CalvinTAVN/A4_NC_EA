@@ -25,6 +25,8 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       return FALSE;
    }
 
+   /*changed */
+   /*printf("%d\n", Node_getNumChildren(n));*/
 
    /*changed*/
    parent = Node_getParent(n);
@@ -126,11 +128,26 @@ boolean CheckerDT_isValid(boolean isInit, Node_T root, size_t count) {
    /* Sample check on a top-level data structure invariant:
       if the DT is not initialized, its count should be 0. */
    if(!isInit)
-      if(count != 0) {
+   {
+         if(count != 0)
+         {
          fprintf(stderr, "Not initialized, but count is not 0\n");
          return FALSE;
+         }
+   }
+   /* changed, if isInit, countis 0 but root is not, return false*/
+   if (isInit)
+   {
+      if (count == 0)
+      {
+         if (root != NULL)
+         {
+            fprintf(stderr, "root should not be created");
+            return FALSE;
+         }
       }
-
+   }
+   
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(root);
 }
