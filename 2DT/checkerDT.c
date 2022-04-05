@@ -24,7 +24,12 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       fprintf(stderr, "A node is a NULL pointer\n");
       return FALSE;
    }
-
+   
+   /* changed 
+   fprintf(stderr, "%s\n", Node_getPath(n));
+   fprintf(stderr, "%d\n", sizeof(Node_getPath(n)));
+   fprintf(stderr, "%d\n", strlen(Node_getPath(n)) + 1);
+   */
    /*changed */
    /*printf("%d\n", Node_getNumChildren(n));*/
 
@@ -36,6 +41,7 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       return FALSE;
       }*/
    if(parent != NULL) {
+      /* what if npath goes 1 beyond*/
       npath = Node_getPath(n);
 
       /* Sample check that parent's path must be prefix of n's path */
@@ -46,6 +52,8 @@ boolean CheckerDT_Node_isValid(Node_T n) {
          fprintf(stderr, "parents path is NULL\n");
          return FALSE;
       }
+
+      /* changed*/
       if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0){                                       
      fprintf(stderr, "child's path is not the same as parent's path");                                                               
     return FALSE;                                                                                                                   
@@ -57,6 +65,7 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       }
       /* Sample check that n's path after parent's path + '/'
          must have no further '/' characters */
+      /* check here for dtBad4*/
       rest = npath + i;
       rest++;
       char *test = strstr(rest, "/");
@@ -142,11 +151,22 @@ boolean CheckerDT_isValid(boolean isInit, Node_T root, size_t count) {
       {
          if (root != NULL)
          {
-            fprintf(stderr, "root should not be created");
+            fprintf(stderr, "root is not NULL when count is 0\n");
+            return FALSE;
+         }
+      }
+
+      if (root == NULL)
+      {
+         if (count != 0)
+         {
+            fprintf(stderr, "count is not =  0 when root is NULL\n" );
             return FALSE;
          }
       }
    }
+
+
    
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(root);
