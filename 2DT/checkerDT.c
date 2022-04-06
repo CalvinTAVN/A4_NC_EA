@@ -24,29 +24,15 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       fprintf(stderr, "A node is a NULL pointer\n");
       return FALSE;
    }
-   
-   /* changed 
-   fprintf(stderr, "%s\n", Node_getPath(n));
-   fprintf(stderr, "%d\n", sizeof(Node_getPath(n)));
-   fprintf(stderr, "%d\n", strlen(Node_getPath(n)) + 1);
-   */
-   /*changed */
-   /*printf("%d\n", Node_getNumChildren(n));*/
-
-   /*changed*/
+ 
    parent = Node_getParent(n);
-   /*compareParent = strncpy(compareParent, Node_getPath(n), strlen(Node_getPath(n))-2);*/
-   /*if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0){
-      fprintf(stderr, "child's path is not the same as parent's path");
-      return FALSE;
-      }*/
-   if(parent != NULL) {
-      /* what if npath goes 1 beyond*/
+   if(parent != NULL)
+   {
       npath = Node_getPath(n);
-
       /* Sample check that parent's path must be prefix of n's path */
       ppath = Node_getPath(parent);
-      /*changed*/
+      
+      /* dtBad2*/
       if (ppath == NULL)
       {
          fprintf(stderr, "parents path is NULL\n");
@@ -54,10 +40,11 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       }
 
       /* changed*/
-      if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0){                                       
-     fprintf(stderr, "child's path is not the same as parent's path");                                                               
-    return FALSE;                                                                                                                   
-           }
+      if(strncmp(Node_getPath(n), Node_getPath(parent), strlen(Node_getPath(parent))) != 0)
+      {                                       
+         fprintf(stderr, "child's path is not the same as parent's path");                                                               
+         return FALSE;                                                                                                                   
+      }
       i = strlen(ppath);
       if(strncmp(npath, ppath, i)) {
          fprintf(stderr, "P's path is not a prefix of C's path\n");
@@ -68,8 +55,8 @@ boolean CheckerDT_Node_isValid(Node_T n) {
       /* check here for dtBad4*/
       rest = npath + i;
       rest++;
-      char *test = strstr(rest, "/");
-      if(strstr(rest, "/") != NULL) {
+      if(strstr(rest, "/") != NULL)
+      {
          fprintf(stderr, "C's path has grandchild of P's path\n");
          return FALSE;
       }
@@ -106,7 +93,7 @@ static boolean CheckerDT_treeCheck(Node_T n) {
       {
          Node_T child = Node_getChild(n, c);
 
-         /*changed*/
+         /*dtBad3*/
          /*checking if child nodes are in lexicographic*/
             if (Node_getNumChildren(n) > 1){
                for (i = 0; i < Node_getNumChildren(n) - 1; i++)
@@ -156,11 +143,22 @@ boolean CheckerDT_isValid(boolean isInit, Node_T root, size_t count) {
          }
       }
 
+      /* dtBad5*/
       if (root == NULL)
       {
          if (count != 0)
          {
-            fprintf(stderr, "count is not =  0 when root is NULL\n" );
+            fprintf(stderr, "count is not equal to 0 when root is NULL\n" );
+            return FALSE;
+         }
+      }
+
+      /*dtBad4*/
+      if (root != NULL)
+      {
+         if (Node_getParent(root) != NULL)
+         {
+            fprintf(stderr, "Root's parent is not NULL\n");
             return FALSE;
          }
       }
