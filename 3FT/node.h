@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* node.h                                                             */
-/* Author: Calvin Nguyen and Alex Elo                                 */
+/* Author: Calvin Nguyen and Alex Eng                                 */
 /*--------------------------------------------------------------------*/
 
 #ifndef NODE_INCLUDED
