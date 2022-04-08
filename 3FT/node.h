@@ -45,6 +45,8 @@ void *Node_populateContents(Node_T fileNode, void *newContent. size_t newLength)
 */
 size_t Node_destroy(Node_T n);
 
+/*returns the path of the Node*/
+const char* Node_getPath(Node_T n);
 
 /*
   Compares node1 and node2 based on their paths.
