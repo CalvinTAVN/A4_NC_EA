@@ -119,6 +119,10 @@ static int FT_linkParentToChild(Node_T parent, Node_T child) {
    Note* the last 3 parameters determines if the last node in the
    path is a file or a directory, all preceding nodes are automatically
    directories.
+   
+   if the last node in the created node is meant to be a file, predefined
+   by the isFile boolean, then use contents and filelength to populate
+   the last file in the Node
 */
 static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *contents, size_t fileLength) {
 
