@@ -148,8 +148,11 @@ void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
 
 /* see node.h for specification */
 size_t Node_destroy(Node_T n) {
+   /* variable used to traverse the children*/
    size_t i;
+   /* counts the number of nodes destroyed*/
    size_t count = 0;
+   /* recursived node of children*/
    Node_T c;
 
    assert(n != NULL);
@@ -213,8 +216,12 @@ size_t Node_getNumChildren(Node_T n)
 /* see node.h for specification */
 int Node_hasChild(Node_T n, const char* path, size_t* childID)
 {
+   /* index at which the child is located
+      in the index*/
    size_t index;
+   /* variable that represents the success of the function*/
    int result;
+   /* temporary node to check upon*/
    Node_T checker;
 
    assert(n != NULL);
@@ -265,8 +272,12 @@ Node_T Node_getParent(Node_T n) {
 
 /* see node.h for specification */
 int Node_linkChild(Node_T parent, Node_T child) {
+   /* index of the specified child in dynArray*/
    size_t i;
+   /* Variable that represents the success of the function*/
    int result;
+   /* variable that represents the rest of the pathway
+      apart from parent*/
    char* rest;
 
    assert(parent != NULL);
@@ -324,6 +335,7 @@ int Node_linkChild(Node_T parent, Node_T child) {
 
 /* see node.h for specification */
 int  Node_unlinkChild(Node_T parent, Node_T child) {
+   /* Index at which to remove child in dynarray*/
    size_t i;
 
    assert(parent != NULL);
@@ -342,7 +354,9 @@ int  Node_unlinkChild(Node_T parent, Node_T child) {
 
 /* see node.h for specification */
 int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputtedContents, size_t lengthOfFile) {
+   /* Node that represents the child to be removed*/
    Node_T new;
+   /* variable that represents the success of the function*/
    int result;
 
    assert(parent != NULL);
@@ -368,6 +382,9 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
 
 /* see node.h for specification */
 char* Node_toString(Node_T n) {
+   /* char that represents the 
+      lexicographic representation
+       of the node at its children*/
    char* copyPath;
 
    assert(n != NULL);
