@@ -1,113 +1,100 @@
 /*--------------------------------------------------------------------*/
-/* node.c                                                             */
+/* ft.c                                                               */
 /* Author: Calvin Nguyen & Alex Eng                                   */
 /*--------------------------------------------------------------------*/
 
-#include <stdlib.h>
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 #include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 #include "dynarray.h"
+#include "ft.h"
 #include "node.h"
 #include "a4def.h"
 
+/* A Directory Tree is an AO with 3 state variables: */
+/* a flag for if it is in an initialized state (TRUE) or not (FALSE) */
+static boolean isInitialized;
+/* a pointer to the root node in the hierarchy */
+static Node_T root;
+/* a counter of the number of nodes in the hierarchy */
+static size_t count;
+
+/* A counter for the number of file nodes in the hierarchy*/
+static size_t fileCount;
+
+/* a counter for the number of directory nodes in the hierarchy*/
+static size_t directoryCount;
+
 /*
-   A node structure represents a directory in the directory tree
+   Starting at the parameter curr, traverses as far down
+   the hierarchy as possible while still matching the path
+   parameter.
+   Returns a pointer to the farthest matching node down that path,
+   or NULL if there is no node in curr's hierarchy that matches
+   a prefix of the path
 */
-struct node {
-   /* the full path of this directory */
-   char* path;
-
-   /* the parent directory of this directory
-      NULL for the root of the directory tree */
-   Node_T parent;
-
-   /* the subdirectories of this directory
-      stored in sorted order by pathname */
-   DynArray_T children;
-
-   /* boolean isFile that determines if the noode is a 
-      file or directory*/
-   boolean isFile;
-
-   /* void * that contains the pointer to the contents 
-      if the node is a file*/
-   void *contents;
-
-   /* size_t that contains the length in char of the file */
-   size_t fileLength;
-};
-
-/* see node.h for specification */
-size_t Node_destroy(Node_T n) {
+static Node_T FT_traversePathFrom(char* path, Node_T curr) {
+   Node_T found;
    size_t i;
-   size_t count = 0;
-   Node_T c;
 
-   assert(n != NULL);
+   assert(path != NULL);
 
-   if(n->isFile == FALSE) {
-       for(i = 0; i < DynArray_getLength(n->children); i++)
-       {
-            c = DynArray_get(n->children, i);
-            count += Node_destroy(c);
-       }
-       DynArray_free(n->children);
-   }
-
-   if(n->contents != NULL) {
-       free(n->contents);
-   }
-   free(n->path);
-   free(n);
-   count++;
-
-   return count;
-}
-
-/* see node.h for specification */
-Node_T Node_getChild(Node_T n, size_t childID) {
-   assert(n != NULL);
-   assert(n->isFile == FALSE);
-   assert(n->contents == NULL);
-   assert(n->fileLength == NULL);
-
-   if(DynArray_getLength(n->children) > childID) {
-      return DynArray_get(n->children, childID);
-   }
-   else {
+   if(curr == NULL)
       return NULL;
+
+   else if(!strcmp(path,Node_getPath(curr)))
+      return curr;
+   
+   else if(checkIsFile(curr) == TRUE)
+        return NULL;
+
+   else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr)))) {
+      for(i = 0; i < Node_getNumChildren(curr); i++) {
+         found = DT_traversePathFrom(path,
+                                Node_getChild(curr, i));
+         if(found != NULL)
+            return found;
+      }
+      return curr;
    }
+   return NULL;
 }
 
-/* see node.h for specification */
-Node_T Node_getParent(Node_T n) {
-   assert(n != NULL);
+/* see ft.h for specification */
+int FT_insertDir(char* path) {
 
-   return n->parent;
+   Node_T curr;
+   int result;
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   assert(path != NULL);
+   assert(path->isFile == FALSE);
+
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+   curr = DT_traversePath(path);
+   result = DT_insertRestOfPath(path, curr);
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   return result;
 }
 
-/* see node.h for specification */
-int  Node_unlinkChild(Node_T parent, Node_T child) {
-   size_t i;
+/* see ft.h for specification */
+int FT_insertFile(char *path, void *contents, size_t length) {
 
-   assert(parent != NULL);
-   assert(child != NULL);
-   assert(CheckerDT_Node_isValid(parent));
-   assert(CheckerDT_Node_isValid(child));
+   Node_T curr;
+   int result;
 
-   if(DynArray_bsearch(parent->children, child, &i,
-         (int (*)(const void*, const void*)) Node_compare) == 0) {
-      assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));
-      return PARENT_CHILD_ERROR;
-   }
-
-   (void) DynArray_removeAt(parent->children, i);
-
-   assert(CheckerDT_Node_isValid(parent));
-   assert(CheckerDT_Node_isValid(child));
-   return SUCCESS;
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   assert(path != NULL);
+   assert(path->isFile == TRUE);
+   
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+   curr = DT_traversePath(path);
+   result = DT_insertRestOfPath(path, curr);
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   return result;
 }
-
