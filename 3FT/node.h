@@ -36,7 +36,7 @@ typedef struct node* Node_T;
 Node_T Node_create(const char* pathName, Node_T parent, boolean fileCheck);
 
 /* populates file*/
-void *Node_populateContents(Node_T fileNode, void *newContent. size_t newLength);
+void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength);
 
 /*
   Destroys the entire hierarchy of nodes rooted at n,
