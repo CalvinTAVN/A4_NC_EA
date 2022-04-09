@@ -48,6 +48,7 @@ struct node {
   which is then owned by the caller!
 */
 static char* Node_buildPath(Node_T n, const char* dir) {
+   /* char that represents what n's path will be*/
    char* path;
 
    assert(dir != NULL);
@@ -74,16 +75,15 @@ static char* Node_buildPath(Node_T n, const char* dir) {
 
 /* see node.h for specification */
 Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
+   /* variable that represents the new node*/
    Node_T new;
 
    /* parent can be null if its a root, and not NULL if its a child*/
-   /*assert(parent == NULL || CheckerDT_Node_isValid(parent));*/
-
+   
    assert(dir != NULL);
 
    new = malloc(sizeof(struct node));
    if(new == NULL) {
-      /*assert(parent == NULL || CheckerDT_Node_isValid(parent));*/
       return NULL;
    }
 
@@ -91,7 +91,6 @@ Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
 
    if(new->path == NULL) {
       free(new);
-      /*assert(parent == NULL || CheckerDT_Node_isValid(parent));*/
       return NULL;
    }
 
@@ -121,19 +120,17 @@ Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
       {
         free(new->path);
         free(new);
-        /*assert(parent == NULL || CheckerDT_Node_isValid(parent));*/
         return NULL;
       }
 
    }
-   /*assert(parent == NULL || CheckerDT_Node_isValid(parent));*/
-   /*assert(CheckerDT_Node_isValid(new));*/
    return new;
 }
 
 /* see node.h for specification*/
 void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
 {
+   /* variable that contains the old contents of fileNode*/
   void *oldContents;
 
 
@@ -143,13 +140,6 @@ void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
 
   /* Leaves the freeing of old space to the client*/
   oldContents = fileNode->contents;
-
-  /* mallocs the size of contents and populates it */
-  /*fileNode->contents = (void *)malloc(newLength);
-  if (fileNode->contents == NULL)
-  {
-     return NULL;
-     }*/
   fileNode->contents = newContent;
   fileNode->fileLength = newLength;
 
@@ -174,10 +164,6 @@ size_t Node_destroy(Node_T n) {
        DynArray_free(n->children);
    }
 
-   /*if((n->contents != NULL) && (n->isFile == TRUE))
-   {
-      free(n->contents);
-      }*/
    free(n->path);
    free(n);
    count++;
@@ -361,12 +347,10 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
 
    assert(parent != NULL);
    assert(dir != NULL);
-   /*assert(CheckerDT_Node_isValid(parent));*/
 
    new = Node_create(dir, parent, isFile);
    if(new == NULL)
    {
-      /*assert(CheckerDT_Node_isValid(parent));*/
       return PARENT_CHILD_ERROR;
    }
    if ((isFile) && (inputtedContents != NULL))
@@ -378,10 +362,6 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
    result = Node_linkChild(parent, new);
    if(result != SUCCESS)
       (void) Node_destroy(new);
-   /*else*/
-      /*assert(CheckerDT_Node_isValid(new));*/
-
-   /*assert(CheckerDT_Node_isValid(parent));*/
    return result;
 }
 
