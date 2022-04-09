@@ -258,11 +258,11 @@ boolean FT_containsDir(char* path) {
       return FALSE;
 
    curr = FT_traversePath(path);
-   if(checkIsFile(curr) == FALSE)
-        return FALSE;
 
    if(curr == NULL)
       result = FALSE;
+   else if (checkIsFile(curr) == FALSE)
+      return FALSE;
    else if(strcmp(path, Node_getPath(curr)))
       result = FALSE;
    else
@@ -371,13 +371,11 @@ boolean FT_containsFile(char *path)
 
    curr = FT_traversePath(path);
 
-   if (checkIsFile(curr) != TRUE)
-   {
-       return FALSE;
-   }
 
    if(curr == NULL)
       result = FALSE;
+   else if (checkIsFile(curr) != TRUE)
+      return FALSE;
    else if(strcmp(path, Node_getPath(curr)))
       result = FALSE;
    else
