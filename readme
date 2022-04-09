@@ -153,6 +153,20 @@ count + 1 when it should be count instead.
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
+-Many functions in both nodeGood.c and dtGood.c could use more comments
+within the actual functions stating how the function is doing what they are doing
+and how.
+-Many functions in both NodeGood.c and dtGood.c need more modulation such as in
+DT_insertRestOfPath and DT_toString
+                    -DT_insertRestOfPath could modulate the part where it checks
+                    if any of the newly created paths are null and destroys the path.
+
+-Some Variable names could be better differentiated such as new and firstnew
+-Some Functions Name could be shortened but still retain the same level of clarity
+      like DT_strlenAccumulate could be shortened to DT_strlenAccum
+ -in DT_toString, totalStrlen could be camelCased to totalStrLen
+ -Some Methods in both Node.c and DtGood.c aren't use at all such as
+ Node_hasChild, Node_linkChild.
 
 
 ------------------------------------------------------------------------
