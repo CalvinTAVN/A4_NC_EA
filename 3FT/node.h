@@ -33,7 +33,7 @@ typedef struct node* Node_T;
     as the parent parameter value. Children is set to DynArray_new(0), Boolean fileCheck is set
     to FALSE, contents is set to NULL, fileLength is set to NULL
 */
-Node_T Node_create(const char* pathName, Node_T parent, boolean fileCheck);
+Node_T Node_create(const char* dir, Node_T parent, boolean isFile);
 
 /* given a fileNode, it will replace the old contents of the fileNode and replace
    it with the contents in newContent and replace the filelength with newLength*/
