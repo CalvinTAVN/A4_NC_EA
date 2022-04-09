@@ -12,7 +12,6 @@
   may be leaves or non-leaves, and files are always leaves.
 */
 
-#include <stddef.h>
 #include "a4def.h"
 
 /*
