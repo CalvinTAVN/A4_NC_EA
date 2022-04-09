@@ -1,100 +1,81 @@
-/*--------------------------------------------------------------------*/
-/* ft.c                                                               */
-/* Author: Calvin Nguyen & Alex Eng                                   */
-/*--------------------------------------------------------------------*/
-
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-
-#include "dynarray.h"
-#include "ft.h"
-#include "node.h"
-#include "a4def.h"
-
-/* A Directory Tree is an AO with 3 state variables: */
-/* a flag for if it is in an initialized state (TRUE) or not (FALSE) */
-static boolean isInitialized;
-/* a pointer to the root node in the hierarchy */
-static Node_T root;
-/* a counter of the number of nodes in the hierarchy */
-static size_t count;
-
-/* A counter for the number of file nodes in the hierarchy*/
-static size_t fileCount;
-
-/* a counter for the number of directory nodes in the hierarchy*/
-static size_t directoryCount;
-
-/*
-   Starting at the parameter curr, traverses as far down
-   the hierarchy as possible while still matching the path
-   parameter.
-   Returns a pointer to the farthest matching node down that path,
-   or NULL if there is no node in curr's hierarchy that matches
-   a prefix of the path
-*/
-static Node_T FT_traversePathFrom(char* path, Node_T curr) {
-   Node_T found;
-   size_t i;
-
-   assert(path != NULL);
-
-   if(curr == NULL)
-      return NULL;
-
-   else if(!strcmp(path,Node_getPath(curr)))
-      return curr;
-   
-   else if(checkIsFile(curr) == TRUE)
-        return NULL;
-
-   else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr)))) {
-      for(i = 0; i < Node_getNumChildren(curr); i++) {
-         found = DT_traversePathFrom(path,
-                                Node_getChild(curr, i));
-         if(found != NULL)
-            return found;
-      }
-      return curr;
-   }
-   return NULL;
-}
-
 /* see ft.h for specification */
-int FT_insertDir(char* path) {
-
+boolean FT_containsDir(char* path) {
    Node_T curr;
-   int result;
+   boolean result;
 
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
-   assert(path->isFile == FALSE);
 
    if(!isInitialized)
-      return INITIALIZATION_ERROR;
+      return FALSE;
+
    curr = DT_traversePath(path);
-   result = DT_insertRestOfPath(path, curr);
+   if(checkIsFile(curr) == FALSE)
+        return FALSE;
+
+   if(curr == NULL)
+      result = FALSE;
+   else if(strcmp(path, Node_getPath(curr)))
+      result = FALSE;
+   else
+      result = TRUE;
+
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
-/* see ft.h for specification */
-int FT_insertFile(char *path, void *contents, size_t length) {
+/*
+  Removes the directory hierarchy rooted at path starting from
+  curr. If curr is the data structure's root, root becomes NULL.
+  Returns NO_SUCH_PATH if curr is not the node for path,
+  and SUCCESS otherwise.
+ */
+static int FT_rmDirAt(char* path, Node_T curr) {
 
+   Node_T parent;
+
+   assert(path != NULL);
+   assert(curr != NULL);
+   if(checkIsFile(curr) == TRUE)
+        return NOT_A_DIRECTORY;
+
+   parent = Node_getParent(curr);
+
+   if(!strcmp(path,Node_getPath(curr))) {
+      if(parent == NULL)
+         root = NULL;
+      else
+         Node_unlinkChild(parent, curr);
+
+      FT_removePathFrom(curr);
+
+      return SUCCESS;
+   }
+   else
+      return NO_SUCH_PATH;
+
+}
+
+/* see ft.h for specification */
+int FT_rmDir(char* path) {
    Node_T curr;
    int result;
 
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
-   assert(path->isFile == TRUE);
-   
+
    if(!isInitialized)
       return INITIALIZATION_ERROR;
+
    curr = DT_traversePath(path);
-   result = DT_insertRestOfPath(path, curr);
+   if(checkIsFile(curr) == TRUE)
+        return NOT_A_DIRECTORY;
+
+   if(curr == NULL)
+      result =  NO_SUCH_PATH;
+   else
+      result = FT_rmDirAt(path, curr);
+
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
