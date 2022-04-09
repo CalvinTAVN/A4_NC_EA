@@ -109,7 +109,6 @@ static int FT_linkParentToChild(Node_T parent, Node_T child, ) {
    If there is an error linking any of the new nodes,
    returns PARENT_CHILD_ERROR
    Otherwise, returns SUCCESS
-
    Note* the last 3 parameters determines if the last node in the
    path is a file or a directory, all preceding nodes are automatically
    directories.
@@ -258,7 +257,7 @@ boolean FT_containsDir(char* path) {
    if(!isInitialized)
       return FALSE;
 
-   curr = DT_traversePath(path);
+   curr = FT_traversePath(path);
    if(checkIsFile(curr) == FALSE)
         return FALSE;
 
@@ -318,7 +317,7 @@ int FT_rmDir(char* path)
    if(!isInitialized)
       return INITIALIZATION_ERROR;
 
-   curr = DT_traversePath(path);
+   curr = FT_traversePath(path);
    if(checkIsFile(curr) == TRUE)
         return NOT_A_DIRECTORY;
 
@@ -349,7 +348,7 @@ int FT_insertFile(char *path, void *contents, size_t length)
        return NOT_A_DIRECTORY;
    }
 
-   result = DT_insertRestOfPath(path, curr, TRUE, contents, length);
+   result = FT_insertRestOfPath(path, curr, TRUE, contents, length);
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
@@ -538,7 +537,7 @@ int FT_stat(char *path, boolean *type, size_t *length)
 }
 
 /* see dt.h for specification */
-int DT_init(void) 
+int FT_init(void) 
 {
    /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(isInitialized)
@@ -551,13 +550,13 @@ int DT_init(void)
 }
 
 /* see dt.h for specification */
-int DT_destroy(void) 
+int FT_destroy(void) 
 {
    /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(!isInitialized)
       return INITIALIZATION_ERROR;
 
-   DT_removePathFrom(root);
+   FT_removePathFrom(root);
    root = NULL;
    isInitialized = 0;
    /*assert(CheckerDT_isValid(isInitialized,root,count));*/
@@ -569,7 +568,7 @@ int DT_destroy(void)
    inserting each payload to DynArray_T d beginning at index i.
    Returns the next unused index in d after the insertion(s).
 */
-static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
+static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    size_t c;
 
    assert(d != NULL);
@@ -582,7 +581,7 @@ static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
       if (checkIsFile(n) == FALSE)
       {
         for(c = 0; c < Node_getNumChildren(n); c++)
-            i = DT_preOrderTraversal(Node_getChild(n, c), d, i);
+            i = FT_preOrderTraversal(Node_getChild(n, c), d, i);
       }
    }
    return i;
@@ -593,7 +592,7 @@ static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    to accumulate a string length, rather than returning the length of
    str, and also always adds one more in addition to str's length.
 */
-static void DT_strlenAccumulate(char* str, size_t* pAcc) 
+static void FT_strlenAccumulate(char* str, size_t* pAcc) 
 {
    assert(pAcc != NULL);
 
@@ -606,7 +605,7 @@ static void DT_strlenAccumulate(char* str, size_t* pAcc)
    order, appending str onto acc, and also always adds a newline at
    the end of the concatenated string.
 */
-static void DT_strcatAccumulate(char* str, char* acc) 
+static void FT_strcatAccumulate(char* str, char* acc) 
 {
    assert(acc != NULL);
 
@@ -616,7 +615,7 @@ static void DT_strcatAccumulate(char* str, char* acc)
 
 
 /* see dt.h for specification */
-char* DT_toString(void) {
+char* FT_toString(void) {
    DynArray_T nodes;
    size_t totalStrlen = 1;
    char* result = NULL;
@@ -627,9 +626,9 @@ char* DT_toString(void) {
       return NULL;
 
    nodes = DynArray_new(count);
-   (void) DT_preOrderTraversal(root, nodes, 0);
+   (void) FT_preOrderTraversal(root, nodes, 0);
 
-   DynArray_map(nodes, (void (*)(void *, void*)) DT_strlenAccumulate, (void*) &totalStrlen);
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strlenAccumulate, (void*) &totalStrlen);
 
    result = malloc(totalStrlen);
    if(result == NULL) {
@@ -639,28 +638,9 @@ char* DT_toString(void) {
    }
    *result = '\0';
 
-   DynArray_map(nodes, (void (*)(void *, void*)) DT_strcatAccumulate, (void *) result);
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strcatAccumulate, (void *) result);
 
    DynArray_free(nodes);
    /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
