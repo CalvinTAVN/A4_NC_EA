@@ -343,6 +343,10 @@ int FT_insertFile(char *path, void *contents, size_t length)
       return INITIALIZATION_ERROR;
    curr = FT_traversePath(path);
 
+   if (curr == NULL)
+   {
+      return CONFLICTING_PATH;
+   }
    if (checkIsFile(curr) == TRUE)
    {
        return NOT_A_DIRECTORY;
