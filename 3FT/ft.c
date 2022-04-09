@@ -40,9 +40,6 @@ static Node_T FT_traversePathFrom(char* path, Node_T curr) {
    else if(!strcmp(path,Node_getPath(curr)))
       return curr;
 
-   /*else if(checkIsFile(curr) == TRUE)
-     return NULL;*/
-
    else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr))))
    {
       if (checkIsFile(curr) == FALSE)
@@ -148,7 +145,6 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
 
    if (parent != NULL)
    {
-      /* assert(checkIsFile(parent) == FALSE)*/
       if (checkIsFile(parent) == TRUE)
       {
          return NOT_A_DIRECTORY;
@@ -209,7 +205,6 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       }
 
       curr = new;
-      /*dirToken = strtok(NULL, "/");*/
 
    }
 
@@ -239,7 +234,6 @@ int FT_insertDir(char* path) {
    Node_T curr;
    int result;
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
 
    if(!isInitialized)
@@ -247,13 +241,7 @@ int FT_insertDir(char* path) {
 
    curr = FT_traversePath(path);
 
-   /*if ((curr != NULL) && (checkIsFile(curr) == TRUE))
-   {
-       return NOT_A_DIRECTORY;
-       }*/
-
    result = FT_insertRestOfPath(path, curr, FALSE, NULL, 0);
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
@@ -262,7 +250,6 @@ boolean FT_containsDir(char* path) {
    Node_T curr;
    boolean result;
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
 
    if(!isInitialized)
@@ -279,7 +266,6 @@ boolean FT_containsDir(char* path) {
    else
       result = TRUE;
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
@@ -322,7 +308,6 @@ int FT_rmDir(char* path)
    Node_T curr;
    int result;
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
 
    if(!isInitialized)
@@ -335,8 +320,7 @@ int FT_rmDir(char* path)
       return NOT_A_DIRECTORY;
    else
       result = FT_rmDirAt(path, curr);
-
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   
    return result;
 }
 
@@ -346,7 +330,6 @@ int FT_insertFile(char *path, void *contents, size_t length)
     Node_T curr;
    int result;
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
 
    if(!isInitialized)
@@ -360,7 +343,6 @@ int FT_insertFile(char *path, void *contents, size_t length)
 
    result = FT_insertRestOfPath(path, curr, TRUE, contents, length);
 
-   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
@@ -374,7 +356,6 @@ boolean FT_containsFile(char *path)
     Node_T curr;
    boolean result;
 
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    assert(path != NULL);
 
    if(!isInitialized)
@@ -392,7 +373,6 @@ boolean FT_containsFile(char *path)
    else
       result = TRUE;
 
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return result;
 }
 
@@ -443,7 +423,6 @@ int FT_rmFile(char *path)
    Node_T curr;
    int result;
 
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    assert(path != NULL);
 
    if(!isInitialized)
@@ -455,7 +434,6 @@ int FT_rmFile(char *path)
    else
       result = FT_rmFileAt(path, curr);
 
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return result;
 }
 
@@ -551,27 +529,24 @@ int FT_stat(char *path, boolean *type, size_t *length)
 /* see dt.h for specification */
 int FT_init(void)
 {
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(isInitialized)
       return INITIALIZATION_ERROR;
    isInitialized = 1;
    root = NULL;
    count = 0;
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return SUCCESS;
 }
 
 /* see dt.h for specification */
 int FT_destroy(void)
 {
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(!isInitialized)
       return INITIALIZATION_ERROR;
 
    FT_removePathFrom(root);
    root = NULL;
    isInitialized = 0;
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+
    return SUCCESS;
 }
 
@@ -632,8 +607,6 @@ char* FT_toString(void) {
    size_t totalStrlen = 1;
    char* result = NULL;
 
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
-
    if(!isInitialized)
       return NULL;
 
@@ -645,7 +618,6 @@ char* FT_toString(void) {
    result = malloc(totalStrlen);
    if(result == NULL) {
       DynArray_free(nodes);
-      /*assert(CheckerDT_isValid(isInitialized,root,count));*/
       return NULL;
    }
    *result = '\0';
@@ -653,6 +625,5 @@ char* FT_toString(void) {
    DynArray_map(nodes, (void (*)(void *, void*)) FT_strcatAccumulate, (void *) result);
 
    DynArray_free(nodes);
-   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return result;
 }
