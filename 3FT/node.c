@@ -405,6 +405,15 @@ boolean checkIsFile(node_T n)
    return n->isFile;
 }
 
+/* returns the contents of a file n*/
+void * Node_getContents(Node_T n)
+{
+   assert(checkIsFile(n) == TRUE);
+   return n->contents;
+}
+
+
+
 
 
 
