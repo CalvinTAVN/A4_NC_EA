@@ -236,7 +236,7 @@ int FT_insertDir(char* path) {
 
    curr = FT_traversePath(path);
 
-   if (checkIsFile(curr) == TRUE)
+   if ((curr != NULL) && (checkIsFile(curr) == TRUE))
    {
        return NOT_A_DIRECTORY;
    }
