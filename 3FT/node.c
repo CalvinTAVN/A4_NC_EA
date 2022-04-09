@@ -395,6 +395,12 @@ char* Node_toString(Node_T n) {
    }
 }
 
+/* returns the boolean value*/
+boolean checkIsFile(node_T n)
+{
+   return n->isFile;
+}
+
 
 
 
