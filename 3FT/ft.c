@@ -121,6 +121,7 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
    char* copyPath;
    char* restPath = path;
    char* dirToken;
+   char* savedToken;
    int result;
    size_t newCount = 0;
 
@@ -156,28 +157,24 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
 
    while(dirToken != NULL) 
    {
-    /* Checks if the token is the last token*/
-    if (strstr(dirToken, "/" ) == NULL)
-    {
+    
         /* if the last token is a file,
            create it as a file and allocate
            its contents*/
-        if (isFile)
-        {
-            new = Node_create(dirToken, curr, isFile);
-            if (new == NULL)
-            {
-                (void)Node_destroy(firstNew);
-            }
+      savedToken = dirToken;
+      dirToken = strtok(NULL, "/");
+      if (isFile && (dirToken == NULL))
+      {
+         new = Node_create(savedToken, curr, isFile);
+         if (new != NULL)
             (void)Node_populateContents(new, contents, fileLength);
-        }
-    }
-    else
-    {
-      new = Node_create(dirToken, curr, FALSE);
-    }
+      else
+      {
+      new = Node_create(savedToken, curr, FALSE);
+      }
 
-      if(new == NULL) {
+      if(new == NULL) 
+      {
          if(firstNew != NULL)
             (void) Node_destroy(firstNew);
          free(copyPath);
@@ -199,7 +196,8 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       }
 
       curr = new;
-      dirToken = strtok(NULL, "/");
+      /*dirToken = strtok(NULL, "/");*/
+
    }
 
    free(copyPath);
