@@ -224,11 +224,20 @@ int FT_insertDir(char* path) {
 
    if(!isInitialized)
       return INITIALIZATION_ERROR;
+      
    curr = DT_traversePath(path);
+
+   if (checkIsFile(curr) == TRUE)
+   {
+       return NOT_A_DIRECTORY;
+   }
+
    result = DT_insertRestOfPath(path, curr, FALSE, NULL, NULL);
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
+
+
 
 
 
