@@ -117,7 +117,7 @@ int Node_unlinkChild(Node_T parent, Node_T child);
   PARENT_CHILD_ERROR if the new child cannot otherwise be added
   
   if the child to be added is a file, then use the parameters:
-  isFile, inputted Contents, lengthOfFile to properly give the file 
+  isFile, inputtedContents, lengthOfFile to properly give the file 
   properties to the child
 */
 int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputtedContents, size_t lengthOfFile);
