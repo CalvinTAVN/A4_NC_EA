@@ -23,14 +23,14 @@ typedef struct node* Node_T;
     the node or its fields.
     The new structure is initialized depending on if it is a file or a directory.
 
-    A file will have its path as the parent's path prefixed to the directory string 
+    A file will have its path as the parent's path prefixed to the directory string
     parameter, separated by a slash. It is also initialized with its parent link
-    as the parent parameter value. Children is set to NULL, Boolean fileCheck is set 
+    as the parent parameter value. Children is set to NULL, Boolean fileCheck is set
     to TRUE, contents is set to NULL, fileLength is set to NULL
 
-    A Directory will have its path as the parent's path prefixed to the directory string 
+    A Directory will have its path as the parent's path prefixed to the directory string
     parameter, separated by a slash. It is also initialized with its parent link
-    as the parent parameter value. Children is set to DynArray_new(0), Boolean fileCheck is set 
+    as the parent parameter value. Children is set to DynArray_new(0), Boolean fileCheck is set
     to FALSE, contents is set to NULL, fileLength is set to NULL
 */
 Node_T Node_create(const char* pathName, Node_T parent, boolean fileCheck);
@@ -118,7 +118,7 @@ int Node_unlinkChild(Node_T parent, Node_T child);
 int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputtedContents, size_t lengthOfFile);
 
 /*
-  Returns a string representation for n, 
+  Returns a string representation for n,
   or NULL if there is an allocation error.
   Allocates memory for the returned string,
   which is then owned by client!
@@ -134,3 +134,4 @@ void * Node_getContents(Node_T n);
 /* if the node is a file, get its length*/
 size_t Node_getFileLength(Node_T n);
 #endif
+
