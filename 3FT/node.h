@@ -35,7 +35,8 @@ typedef struct node* Node_T;
 */
 Node_T Node_create(const char* pathName, Node_T parent, boolean fileCheck);
 
-/* populates file*/
+/* given a fileNode, it will replace the old contents of the fileNode and replace
+   it with the contents in newContent and replace the filelength with newLength*/
 void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength);
 
 /*
