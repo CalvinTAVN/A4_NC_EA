@@ -40,7 +40,7 @@ static Node_T FT_traversePathFrom(char* path, Node_T curr) {
 
    else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr)))) {
       for(i = 0; i < Node_getNumChildren(curr); i++) {
-         found = DT_traversePathFrom(path,
+         found = FT_traversePathFrom(path,
                                 Node_getChild(curr, i));
          if(found != NULL)
             return found;
@@ -55,10 +55,10 @@ static Node_T FT_traversePathFrom(char* path, Node_T curr) {
    path, or NULL if there is no node in the hierarchy that matches a
    prefix of the path.
 */
-static Node_T DT_traversePath(char* path) 
+static Node_T FT_traversePath(char* path) 
 {
    assert(path != NULL);
-   return DT_traversePathFrom(path, root);
+   return FT_traversePathFrom(path, root);
 }
 
 /*
@@ -181,7 +181,7 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       if(firstNew == NULL)
          firstNew = new;
       else {
-         result = DT_linkParentToChild(curr, new);
+         result = FT_linkParentToChild(curr, new);
          if(result != SUCCESS) {
             (void) Node_destroy(new);
             (void) Node_destroy(firstNew);
@@ -202,7 +202,7 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       return SUCCESS;
    }
    else {
-      result = DT_linkParentToChild(parent, firstNew);
+      result = FT_linkParentToChild(parent, firstNew);
       if(result == SUCCESS)
          count += newCount;
       else
@@ -212,6 +212,8 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
    }
 }
 
+
+
 /* see ft.h for specification */
 int FT_insertDir(char* path) {
 
@@ -220,22 +222,433 @@ int FT_insertDir(char* path) {
 
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
-   assert(path->isFile == FALSE);
 
    if(!isInitialized)
       return INITIALIZATION_ERROR;
-      
-   curr = DT_traversePath(path);
+
+   curr = FT_traversePath(path);
 
    if (checkIsFile(curr) == TRUE)
    {
        return NOT_A_DIRECTORY;
    }
 
-   result = DT_insertRestOfPath(path, curr, FALSE, NULL, NULL);
+   result = FT_insertRestOfPath(path, curr, FALSE, NULL, NULL);
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
+
+/* see ft.h for specification */
+boolean FT_containsDir(char* path) {
+   Node_T curr;
+   boolean result;
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   assert(path != NULL);
+
+   if(!isInitialized)
+      return FALSE;
+
+   curr = DT_traversePath(path);
+   if(checkIsFile(curr) == FALSE)
+        return FALSE;
+
+   if(curr == NULL)
+      result = FALSE;
+   else if(strcmp(path, Node_getPath(curr)))
+      result = FALSE;
+   else
+      result = TRUE;
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   return result;
+}
+
+/*
+  Removes the directory hierarchy rooted at path starting from
+  curr. If curr is the data structure's root, root becomes NULL.
+  Returns NO_SUCH_PATH if curr is not the node for path,
+  and SUCCESS otherwise.
+ */
+static int FT_rmDirAt(char* path, Node_T curr) 
+{
+
+   Node_T parent;
+
+   assert(path != NULL);
+   assert(curr != NULL);
+   if(checkIsFile(curr) == TRUE)
+        return NOT_A_DIRECTORY;
+
+   parent = Node_getParent(curr);
+
+   if(!strcmp(path,Node_getPath(curr))) {
+      if(parent == NULL)
+         root = NULL;
+      else
+         Node_unlinkChild(parent, curr);
+
+      FT_removePathFrom(curr);
+
+      return SUCCESS;
+   }
+   else
+      return NO_SUCH_PATH;
+
+}
+
+/* see ft.h for specification */
+int FT_rmDir(char* path) 
+{
+   Node_T curr;
+   int result;
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   assert(path != NULL);
+
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+
+   curr = DT_traversePath(path);
+   if(checkIsFile(curr) == TRUE)
+        return NOT_A_DIRECTORY;
+
+   if(curr == NULL)
+      result =  NO_SUCH_PATH;
+   else
+      result = FT_rmDirAt(path, curr);
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   return result;
+}
+
+/* see ft.h for specification*/
+int FT_insertFile(char *path, void *contents, size_t length)
+{
+    Node_T curr;
+   int result;
+
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   assert(path != NULL);
+   
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+   curr = FT_traversePath(path);
+
+   if (checkIsFile(curr) == TRUE)
+   {
+       return NOT_A_DIRECTORY;
+   }
+
+   result = DT_insertRestOfPath(path, curr, TRUE, contents, length);
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
+   return result;
+}
+
+
+/*
+  Returns TRUE if the tree contains the full path parameter as a
+  file and FALSE otherwise.
+*/
+boolean FT_containsFile(char *path)
+{
+    Node_T curr;
+   boolean result;
+
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   assert(path != NULL);
+
+   if(!isInitialized)
+      return FALSE;
+
+   curr = FT_traversePath(path);
+
+   if (checkIsFile(curr) != TRUE)
+   {
+       return FALSE;
+   }
+
+   if(curr == NULL)
+      result = FALSE;
+   else if(strcmp(path, Node_getPath(curr)))
+      result = FALSE;
+   else
+      result = TRUE;
+
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   return result;
+}
+
+/*
+  Removes the FILE rooted at path starting from
+  curr. If curr is the data structure's root, return 
+  NOT_A_FILE Returns NO_SUCH_PATH if curr is not the node for path,
+  and SUCCESS otherwise.
+  if File 
+ */
+static int FT_rmFileAt(char* path, Node_T curr) {
+
+   Node_T parent;
+
+   assert(path != NULL);
+   assert(curr != NULL);
+
+   parent = Node_getParent(curr);
+   assert(checkIsFile(parent) == FALSE);
+   
+   /* if the node to be removed is a directory,
+      its not afile*/
+   if (checkIsFile(curr) == FALSE)
+   {
+       return NOT_A_FILE;
+   }
+   if(!strcmp(path,Node_getPath(curr))) 
+   {
+      Node_unlinkChild(parent, curr);
+
+      FT_removePathFrom(curr);
+
+      return SUCCESS;
+   }
+   else
+      return NO_SUCH_PATH;
+}
+
+/*
+  Removes the FT file at path.
+  Returns SUCCESS if found and removed.
+  Returns INITIALIZATION_ERROR if not in an initialized state.
+  Returns NOT_A_FILE if path exists but is a directory not a file.
+  Returns NO_SUCH_PATH if the path does not exist in the hierarchy.
+*/
+int FT_rmFile(char *path)
+{
+   Node_T curr;
+   int result;
+
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   assert(path != NULL);
+
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+
+   curr = FT_traversePath(path);
+   if(curr == NULL)
+      result =  NO_SUCH_PATH;
+   else
+      result = FT_rmPathAt(path, curr);
+
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   return result;   
+}
+
+/*
+  Returns the contents of the file at the full path parameter.
+  Returns NULL if the path does not exist or is a directory.
+  Note: checking for a non-NULL return is not an appropriate
+  contains check -- the contents of a file may be NULL.
+*/
+void *FT_getFileContents(char *path)
+{
+    void * results;
+    Node_T curr;
+    
+    assert(path != NULL);
+
+    curr = FT_traversePath(path);
+    if (curr == NULL)
+    {
+        return NULL;
+    }
+    if (checkIsFile(curr) == FALSE)
+    {
+        return NULL;
+    }
+    return Node_getContents(curr);
+}
+
+/*
+  Replaces current contents of the file at the full path parameter with
+  the parameter newContents of size newLength.
+  Returns the old contents if successful. (Note: contents may be NULL.)
+  Returns NULL if the path does not already exist or is a directory.
+*/
+void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
+{
+    void *oldContents;
+    Node_T curr;
+
+    assert(path != NULL);
+    assert(newContents != NULL);
+    assert(newLength != NULL);
+
+    curr = FT_traversePath(path);
+    if (curr == NULL)
+    {
+        return NULL;
+    }
+    if (checkIsFile(curr) == FALSE)
+    {
+        return NULL;
+    }
+    return Node_populateContents(curr, newContents, newLength);
+}
+
+/*
+  Returns SUCCESS if path exists in the hierarchy,
+  returns NO_SUCH_PATH if it does not, and
+  returns INITIALIZATION_ERROR if the structure is not initialized.
+  When returning SUCCESS,
+  if path is a directory: *type is set to FALSE, *length is unchanged
+  if path is a file: *type is set to TRUE, and
+                     *length is set to the length of file's contents.
+  When returning a non-SUCCESS status, *type and *length are unchanged.
+ */
+int FT_stat(char *path, boolean *type, size_t *length)
+{
+    Node_T curr;
+
+    assert(path != NULL);
+    assert(type != NULL);
+    assert(length != NULL);
+
+    if (!isInitialized)
+    {
+        return INITIALIZATION_ERROR;
+    }
+
+    curr = FT_traversePath(path);
+    if (curr == NULL)
+    {
+        return NO_SUCH_PATH;
+    }
+
+    *type = checkIsFile(curr);
+    *length = Node_getFileLength(curr);
+    return SUCCESS;
+}
+
+/* see dt.h for specification */
+int DT_init(void) 
+{
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   if(isInitialized)
+      return INITIALIZATION_ERROR;
+   isInitialized = 1;
+   root = NULL;
+   count = 0;
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   return SUCCESS;
+}
+
+/* see dt.h for specification */
+int DT_destroy(void) 
+{
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   if(!isInitialized)
+      return INITIALIZATION_ERROR;
+
+   DT_removePathFrom(root);
+   root = NULL;
+   isInitialized = 0;
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   return SUCCESS;
+}
+
+/*
+   Performs a pre-order traversal of the tree rooted at n,
+   inserting each payload to DynArray_T d beginning at index i.
+   Returns the next unused index in d after the insertion(s).
+*/
+static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
+   size_t c;
+
+   assert(d != NULL);
+
+   if(n != NULL) 
+   {
+      (void) DynArray_set(d, i, Node_getPath(n));
+      i++;
+      /* Should only be recursive if it is a directory*/
+      if (checkIsFile(n) == FALSE)
+      {
+        for(c = 0; c < Node_getNumChildren(n); c++)
+            i = DT_preOrderTraversal(Node_getChild(n, c), d, i);
+      }
+   }
+   return i;
+}
+
+/*
+   Alternate version of strlen that uses pAcc as an in-out parameter
+   to accumulate a string length, rather than returning the length of
+   str, and also always adds one more in addition to str's length.
+*/
+static void DT_strlenAccumulate(char* str, size_t* pAcc) 
+{
+   assert(pAcc != NULL);
+
+   if(str != NULL)
+      *pAcc += (strlen(str) + 1);
+}
+
+/*
+   Alternate version of strcat that inverts the typical argument
+   order, appending str onto acc, and also always adds a newline at
+   the end of the concatenated string.
+*/
+static void DT_strcatAccumulate(char* str, char* acc) 
+{
+   assert(acc != NULL);
+
+   if(str != NULL)
+      strcat(acc, str); strcat(acc, "\n");
+}
+
+
+/* see dt.h for specification */
+char* DT_toString(void) {
+   DynArray_T nodes;
+   size_t totalStrlen = 1;
+   char* result = NULL;
+
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+
+   if(!isInitialized)
+      return NULL;
+
+   nodes = DynArray_new(count);
+   (void) DT_preOrderTraversal(root, nodes, 0);
+
+   DynArray_map(nodes, (void (*)(void *, void*)) DT_strlenAccumulate, (void*) &totalStrlen);
+
+   result = malloc(totalStrlen);
+   if(result == NULL) {
+      DynArray_free(nodes);
+      /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+      return NULL;
+   }
+   *result = '\0';
+
+   DynArray_map(nodes, (void (*)(void *, void*)) DT_strcatAccumulate, (void *) result);
+
+   DynArray_free(nodes);
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
+   return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
