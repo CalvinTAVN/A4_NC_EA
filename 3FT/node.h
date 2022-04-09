@@ -125,10 +125,10 @@ int Node_addChild(Node_T parent, const char* dir);
 */
 char* Node_toString(Node_T n);
 
-/* returns the boolean value*/
-boolean checkIsFile(node_T n)
-{
-   return n->isFile;
-}
+/* returns the isFile boolean in node n*/
+boolean checkIsFile(Node_T n);
+
+/* returns the contents of a file node*/
+void * Node_getContents(Node_T n);
 
 #endif
