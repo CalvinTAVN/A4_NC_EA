@@ -23,6 +23,15 @@ static size_t fileCount;
 /* a counter for the number of directory nodes in the hierarchy*/
 static size_t directoryCount;
 
+
+/*
+   Starting at the parameter curr, traverses as far down
+   the hierarchy as possible while still matching the path
+   parameter.
+   Returns a pointer to the farthest matching node down that path,
+   or NULL if there is no node in curr's hierarchy that matches
+   a prefix of the path
+*/
 static Node_T FT_traversePathFrom(char* path, Node_T curr) {
    Node_T found;
    size_t i;
