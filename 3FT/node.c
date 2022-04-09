@@ -191,7 +191,19 @@ int Node_compare(Node_T node1, Node_T node2)
 {
    assert(node1 != NULL);
    assert(node2 != NULL);
-
+   /* if node1 is a file and node2 is a directory,
+      automatically prioritize the file, 
+      else if node1 is a directory and node2 is a 
+      file, prioritize file again*/
+   if ((node1->isFile == TRUE) && (node2->isFile == FALSE) )
+   {
+      return -1;
+   }
+   else if ((node1->isFile == FALSE)  && (node2->isFile == TRUE))
+   {
+      return 1;
+   }
+   
    return strcmp(node1->path, node2->path);
 }
 
@@ -271,56 +283,49 @@ int Node_linkChild(Node_T parent, Node_T child) {
    assert(parent->fileLength == NULL);
 
    assert(child != NULL);
-   /*assert(CheckerDT_Node_isValid(parent));
-   assert(CheckerDT_Node_isValid(child));*/
 
    result = Node_hasChild(parent, child->path, NULL);
-   if(result == 1) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+   if(result == 1) 
+   {
       return ALREADY_IN_TREE;
    }
-   if(result == -1) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+   if(result == -1) 
+   {
       return PARENT_CHILD_ERROR;
    }
 
    i = strlen(parent->path);
-   if(strncmp(child->path, parent->path, i)) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+
+   if(strncmp(child->path, parent->path, i)) 
+   {
       return PARENT_CHILD_ERROR;
    }
    rest = child->path + i;
-   if(strlen(child->path) >= i && rest[0] != '/') {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+   if(strlen(child->path) >= i && rest[0] != '/') 
+   {
       return PARENT_CHILD_ERROR;
    }
+
    rest++;
-   if(strstr(rest, "/") != NULL) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+
+   if(strstr(rest, "/") != NULL) 
+   {
       return PARENT_CHILD_ERROR;
    }
    child->parent = parent;
 
    if(DynArray_bsearch(parent->children, child, &i,
-         (int (*)(const void*, const void*)) Node_compare) == 1) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+         (int (*)(const void*, const void*)) Node_compare) == 1)   
+   {
       return ALREADY_IN_TREE;
    }
 
-   if(DynArray_addAt(parent->children, i, child) == TRUE) {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+   if(DynArray_addAt(parent->children, i, child) == TRUE) 
+   {
       return SUCCESS;
    }
-   else {
-      /*assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));*/
+   else
+   {
       return PARENT_CHILD_ERROR;
    }
 }
@@ -331,20 +336,15 @@ int  Node_unlinkChild(Node_T parent, Node_T child) {
 
    assert(parent != NULL);
    assert(child != NULL);
-   assert(CheckerDT_Node_isValid(parent));
-   assert(CheckerDT_Node_isValid(child));
 
    if(DynArray_bsearch(parent->children, child, &i,
-         (int (*)(const void*, const void*)) Node_compare) == 0) {
-      assert(CheckerDT_Node_isValid(parent));
-      assert(CheckerDT_Node_isValid(child));
+         (int (*)(const void*, const void*)) Node_compare) == 0) 
+   {
       return PARENT_CHILD_ERROR;
    }
 
    (void) DynArray_removeAt(parent->children, i);
 
-   assert(CheckerDT_Node_isValid(parent));
-   assert(CheckerDT_Node_isValid(child));
    return SUCCESS;
 }
 
@@ -360,7 +360,7 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
    new = Node_create(dir, parent, isFile);
    if(new == NULL) 
    {
-      assert(CheckerDT_Node_isValid(parent));
+      /*assert(CheckerDT_Node_isValid(parent));*/
       return PARENT_CHILD_ERROR;
    }
    if (isFile && inputtedContents != NULL && lengthOfFile != NULL)
