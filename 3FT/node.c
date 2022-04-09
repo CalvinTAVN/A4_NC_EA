@@ -140,7 +140,7 @@ void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
   assert(fileNode != NULL);
   assert(fileNode->isFile == TRUE);
   assert(newContent != NULL);
-  assert(newLength != -1);
+  assert(newLength != 0);
 
 
   /* Leaves the freeing of old space to the client*/
