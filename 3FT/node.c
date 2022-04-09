@@ -157,6 +157,7 @@ size_t Node_destroy(Node_T n) {
 
    assert(n != NULL);
 
+   /* destroys all children nodes of n if n is not a file */
    if(n->isFile == FALSE)
    {
        for(i = 0; i < DynArray_getLength(n->children); i++)
@@ -281,7 +282,7 @@ int Node_linkChild(Node_T parent, Node_T child) {
    char* rest;
 
    assert(parent != NULL);
-   assert (parent->isFile == FALSE);
+   assert(parent->isFile == FALSE);
    assert(parent->contents == NULL);
    assert(parent->fileLength == 0);
 
