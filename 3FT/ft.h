@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* ft.h                                                               */
-/* Author: Christopher Moretti and Vikash Modi '23                    */
+/* Author: Calvin Nguyen and Alex Eng                                 */
 /*--------------------------------------------------------------------*/
 
 #ifndef FT_INCLUDED
@@ -74,7 +74,6 @@ int FT_rmFile(char *path);
 /*
   Returns the contents of the file at the full path parameter.
   Returns NULL if the path does not exist or is a directory.
-
   Note: checking for a non-NULL return is not an appropriate
   contains check -- the contents of a file may be NULL.
 */
@@ -93,12 +92,10 @@ void *FT_replaceFileContents(char *path, void *newContents,
   Returns SUCCESS if path exists in the hierarchy,
   returns NO_SUCH_PATH if it does not, and
   returns INITIALIZATION_ERROR if the structure is not initialized.
-
   When returning SUCCESS,
   if path is a directory: *type is set to FALSE, *length is unchanged
   if path is a file: *type is set to TRUE, and
                      *length is set to the length of file's contents.
-
   When returning a non-SUCCESS status, *type and *length are unchanged.
  */
 int FT_stat(char *path, boolean *type, size_t *length);
@@ -123,7 +120,6 @@ int FT_destroy(void);
   Returns a string representation of the
   data structure, or NULL if the structure is
   not initialized or there is an allocation error.
-
   Allocates memory for the returned string,
   which is then owned by client!
 */
