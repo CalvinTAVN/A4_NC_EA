@@ -115,7 +115,7 @@ int Node_unlinkChild(Node_T parent, Node_T child);
   ALREADY_IN_TREE if parent already has a child with that path
   PARENT_CHILD_ERROR if the new child cannot otherwise be added
 */
-int Node_addChild(Node_T parent, const char* dir);
+int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputtedContents, size_t lengthOfFile);
 
 /*
   Returns a string representation for n, 
