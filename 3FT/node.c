@@ -27,7 +27,7 @@ struct node {
       stored in sorted order by pathname */
    DynArray_T children;
 
-   /* boolean isFile that determines if the node is a 
+   /* boolean isFile that determines if the node is a
       file or directory*/
   boolean isFile;
 
@@ -96,11 +96,11 @@ Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
    }
 
    new->parent = parent;
-   
+
    /* if the new node to be created is a File, then set the booleanisFile to true,
       set the contents and fileLength initially to 0, and children permamently
       to null, conents and fileLength is populated by function Node_populateContents
-      
+
       if its a  directory, set all file related variables to NULL and 0
       for fileLength and children to
       DynArray_new(0)*/
@@ -139,19 +139,17 @@ void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
 
   assert(fileNode != NULL);
   assert(fileNode->isFile == TRUE);
-  assert(newContent != NULL);
-  assert(newLength != 0);
 
 
   /* Leaves the freeing of old space to the client*/
   oldContents = fileNode->contents;
 
   /* mallocs the size of contents and populates it */
-  fileNode->contents = malloc(newLength);
+  /*fileNode->contents = (void *)malloc(newLength);
   if (fileNode->contents == NULL)
   {
      return NULL;
-  }
+     }*/
   fileNode->contents = newContent;
   fileNode->fileLength = newLength;
 
@@ -166,7 +164,8 @@ size_t Node_destroy(Node_T n) {
 
    assert(n != NULL);
 
-   if(n->isFile == FALSE) {
+   if(n->isFile == FALSE)
+   {
        for(i = 0; i < DynArray_getLength(n->children); i++)
        {
             c = DynArray_get(n->children, i);
@@ -175,9 +174,10 @@ size_t Node_destroy(Node_T n) {
        DynArray_free(n->children);
    }
 
-   if(n->contents != NULL) {
-       free(n->contents);
-   }
+   /*if((n->contents != NULL) && (n->isFile == TRUE))
+   {
+      free(n->contents);
+      }*/
    free(n->path);
    free(n);
    count++;
@@ -186,20 +186,20 @@ size_t Node_destroy(Node_T n) {
 }
 
 /*returns the path of node n*/
-const char* Node_getPath(Node_T n) 
+const char* Node_getPath(Node_T n)
 {
    assert(n != NULL);
    return n->path;
 }
 
 /* see node.h for specification */
-int Node_compare(Node_T node1, Node_T node2) 
+int Node_compare(Node_T node1, Node_T node2)
 {
    assert(node1 != NULL);
    assert(node2 != NULL);
    /* if node1 is a file and node2 is a directory,
-      automatically prioritize the file, 
-      else if node1 is a directory and node2 is a 
+      automatically prioritize the file,
+      else if node1 is a directory and node2 is a
       file, prioritize file again*/
    if ((node1->isFile == TRUE) && (node2->isFile == FALSE) )
    {
@@ -214,7 +214,7 @@ int Node_compare(Node_T node1, Node_T node2)
 }
 
 /* see node.h for specification */
-size_t Node_getNumChildren(Node_T n) 
+size_t Node_getNumChildren(Node_T n)
 {
    assert(n != NULL);
    assert(n->isFile == FALSE);
@@ -224,8 +224,8 @@ size_t Node_getNumChildren(Node_T n)
    return DynArray_getLength(n->children);
 }
 
-/* see node.h for specification */ 
-int Node_hasChild(Node_T n, const char* path, size_t* childID) 
+/* see node.h for specification */
+int Node_hasChild(Node_T n, const char* path, size_t* childID)
 {
    size_t index;
    int result;
@@ -291,42 +291,42 @@ int Node_linkChild(Node_T parent, Node_T child) {
    assert(child != NULL);
 
    result = Node_hasChild(parent, child->path, NULL);
-   if(result == 1) 
+   if(result == 1)
    {
       return ALREADY_IN_TREE;
    }
-   if(result == -1) 
+   if(result == -1)
    {
       return PARENT_CHILD_ERROR;
    }
 
    i = strlen(parent->path);
 
-   if(strncmp(child->path, parent->path, i)) 
+   if(strncmp(child->path, parent->path, i))
    {
       return PARENT_CHILD_ERROR;
    }
    rest = child->path + i;
-   if(strlen(child->path) >= i && rest[0] != '/') 
+   if(strlen(child->path) >= i && rest[0] != '/')
    {
       return PARENT_CHILD_ERROR;
    }
 
    rest++;
 
-   if(strstr(rest, "/") != NULL) 
+   if(strstr(rest, "/") != NULL)
    {
       return PARENT_CHILD_ERROR;
    }
    child->parent = parent;
 
    if(DynArray_bsearch(parent->children, child, &i,
-         (int (*)(const void*, const void*)) Node_compare) == 1)   
+         (int (*)(const void*, const void*)) Node_compare) == 1)
    {
       return ALREADY_IN_TREE;
    }
 
-   if(DynArray_addAt(parent->children, i, child) == TRUE) 
+   if(DynArray_addAt(parent->children, i, child) == TRUE)
    {
       return SUCCESS;
    }
@@ -344,7 +344,7 @@ int  Node_unlinkChild(Node_T parent, Node_T child) {
    assert(child != NULL);
 
    if(DynArray_bsearch(parent->children, child, &i,
-         (int (*)(const void*, const void*)) Node_compare) == 0) 
+         (int (*)(const void*, const void*)) Node_compare) == 0)
    {
       return PARENT_CHILD_ERROR;
    }
@@ -364,7 +364,7 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
    /*assert(CheckerDT_Node_isValid(parent));*/
 
    new = Node_create(dir, parent, isFile);
-   if(new == NULL) 
+   if(new == NULL)
    {
       /*assert(CheckerDT_Node_isValid(parent));*/
       return PARENT_CHILD_ERROR;
@@ -373,8 +373,8 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
    {
      (void)Node_populateContents(new, inputtedContents, lengthOfFile);
    }
-  
-  
+
+
    result = Node_linkChild(parent, new);
    if(result != SUCCESS)
       (void) Node_destroy(new);
@@ -417,21 +417,5 @@ void * Node_getContents(Node_T n)
 /* if the node is a file, get its length*/
 size_t Node_getFileLength(Node_T n)
 {
-   assert(checkIsFile(n) == TRUE);
    return n->fileLength;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
