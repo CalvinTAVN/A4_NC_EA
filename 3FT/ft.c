@@ -87,7 +87,7 @@ static void FT_removePathFrom(Node_T curr)
    If not possible, destroys the hierarchy rooted at child
    and returns PARENT_CHILD_ERROR, otherwise, returns SUCCESS.
 */
-static int FT_linkParentToChild(Node_T parent, Node_T child, ) {
+static int FT_linkParentToChild(Node_T parent, Node_T child) {
 
    assert(parent != NULL);
    assert(checkIsFile(parent) == FALSE);
@@ -157,7 +157,7 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
    while(dirToken != NULL) 
    {
     /* Checks if the token is the last token*/
-    if (strstr(dirToken, '/' ) == NULL)
+    if (strstr(dirToken, "/" ) == NULL)
     {
         /* if the last token is a file,
            create it as a file and allocate
@@ -241,7 +241,7 @@ int FT_insertDir(char* path) {
        return NOT_A_DIRECTORY;
    }
 
-   result = FT_insertRestOfPath(path, curr, FALSE, NULL, NULL);
+   result = FT_insertRestOfPath(path, curr, FALSE, NULL, 0);
    /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
@@ -444,7 +444,7 @@ int FT_rmFile(char *path)
    if(curr == NULL)
       result =  NO_SUCH_PATH;
    else
-      result = FT_rmPathAt(path, curr);
+      result = FT_rmFileAt(path, curr);
 
    /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return result;   
@@ -458,7 +458,6 @@ int FT_rmFile(char *path)
 */
 void *FT_getFileContents(char *path)
 {
-    void * results;
     Node_T curr;
     
     assert(path != NULL);
@@ -483,12 +482,10 @@ void *FT_getFileContents(char *path)
 */
 void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
 {
-    void *oldContents;
     Node_T curr;
 
     assert(path != NULL);
     assert(newContents != NULL);
-    assert(newLength != NULL);
 
     curr = FT_traversePath(path);
     if (curr == NULL)
