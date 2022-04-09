@@ -136,6 +136,7 @@ boolean checkIsFile(Node_T n);
 void * Node_getContents(Node_T n);
 
 /* if the node is a file, get its length*/
+/* returns the fileLength */
 size_t Node_getFileLength(Node_T n);
 #endif
 
