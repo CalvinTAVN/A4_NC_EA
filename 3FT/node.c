@@ -146,6 +146,10 @@ void *Node_populateContents(Node_T fileNode, void *newContent. size_t newLength)
 
   /* mallocs the size of contents and populates it */
   fileNode->contents = malloc(newLength);
+  if (fileNode->contents == NULL)
+  {
+     return NULL;
+  }
   fileNode->contents = newContent;
   fileNode->fileLength = newLength;
 
@@ -203,7 +207,7 @@ int Node_compare(Node_T node1, Node_T node2)
    {
       return 1;
    }
-   
+
    return strcmp(node1->path, node2->path);
 }
 
