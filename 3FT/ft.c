@@ -29,7 +29,9 @@ static size_t count;
    a prefix of the path
 */
 static Node_T FT_traversePathFrom(char* path, Node_T curr) {
+   /* Node that represents the farthest down node*/
    Node_T found;
+   /* Variable used to traverse the DynnArray children*/
    size_t i;
 
    assert(path != NULL);
@@ -42,6 +44,7 @@ static Node_T FT_traversePathFrom(char* path, Node_T curr) {
 
    else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr))))
    {
+      /* Can only recursively check your children if you are a directory*/
       if (checkIsFile(curr) == FALSE)
       {
          for(i = 0; i < Node_getNumChildren(curr); i++)
@@ -114,14 +117,26 @@ static int FT_linkParentToChild(Node_T parent, Node_T child) {
 */
 static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *contents, size_t fileLength) {
 
+   /* Variable that holds the current Node that will be built off off*/
    Node_T curr = parent;
+   /* represents the first node that was created*/
    Node_T firstNew = NULL;
+   /* represents the current node being created*/
    Node_T new;
+   /* represents the malloc'd path
+      that will be tokenized*/
    char* copyPath;
+   /* represents the path after the parent node*/
    char* restPath = path;
+   /* represents the token from copypath */
    char* dirToken;
+   /* copy of dirToken to be used to actually
+      create the nodes*/
    char* savedToken;
+   /* represents the variable that will determine
+       the success of the function*/
    int result;
+   /* amount of newly created nodes*/
    size_t newCount = 0;
 
    assert(path != NULL);
@@ -150,7 +165,8 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
          return NOT_A_DIRECTORY;
       }
    }
-
+   /* will get the rest of the path,
+      and tokenize it*/
    copyPath = malloc(strlen(restPath)+1);
    if(copyPath == NULL)
       return MEMORY_ERROR;
@@ -163,8 +179,12 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
         /* if the last token is a file,
            create it as a file and allocate
            its contents*/
+      /* will check the token after*/
       savedToken = dirToken;
       dirToken = strtok(NULL, "/");
+      /* if the last token is meant to be a file,
+         create a file node, otherwise, create
+         a directory node*/
       if (isFile && (dirToken == NULL))
       {
          if (checkIsFile(curr) == TRUE)
@@ -230,8 +250,11 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
 
 /* see ft.h for specification */
 int FT_insertDir(char* path) {
-
+   
+   /* Variable that holds the current Node that will be built off off*/
    Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    int result;
 
    assert(path != NULL);
@@ -247,7 +270,11 @@ int FT_insertDir(char* path) {
 
 /* see ft.h for specification */
 boolean FT_containsDir(char* path) {
+   
+   /* Variable that holds the current Node that will be built off off*/
    Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    boolean result;
 
    assert(path != NULL);
@@ -305,7 +332,10 @@ static int FT_rmDirAt(char* path, Node_T curr)
 /* see ft.h for specification */
 int FT_rmDir(char* path)
 {
+   /* Variable that holds the current Node that will be built off off*/
    Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    int result;
 
    assert(path != NULL);
@@ -327,7 +357,10 @@ int FT_rmDir(char* path)
 /* see ft.h for specification*/
 int FT_insertFile(char *path, void *contents, size_t length)
 {
+   /* Variable that holds the current Node that will be built off off*/
     Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    int result;
 
    assert(path != NULL);
@@ -340,7 +373,6 @@ int FT_insertFile(char *path, void *contents, size_t length)
    {
       return CONFLICTING_PATH;
    }
-
    result = FT_insertRestOfPath(path, curr, TRUE, contents, length);
 
    return result;
@@ -353,7 +385,10 @@ int FT_insertFile(char *path, void *contents, size_t length)
 */
 boolean FT_containsFile(char *path)
 {
+   /* Variable that holds the current Node that will be built off off*/
     Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    boolean result;
 
    assert(path != NULL);
@@ -420,7 +455,10 @@ static int FT_rmFileAt(char* path, Node_T curr) {
 */
 int FT_rmFile(char *path)
 {
+   /* Variable that holds the current Node that will be built off off*/
    Node_T curr;
+   /* represents the variable that will determine
+       the success of the function*/
    int result;
 
    assert(path != NULL);
@@ -445,6 +483,7 @@ int FT_rmFile(char *path)
 */
 void *FT_getFileContents(char *path)
 {
+   /* Variable that holds the current Node that will be built off off*/
     Node_T curr;
 
     assert(path != NULL);
@@ -469,6 +508,7 @@ void *FT_getFileContents(char *path)
 */
 void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
 {
+   /* Variable that holds the current Node that will be built off off*/
     Node_T curr;
 
     assert(path != NULL);
@@ -498,6 +538,7 @@ void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
  */
 int FT_stat(char *path, boolean *type, size_t *length)
 {
+   /* Variable that holds the current Node that will be built off off*/
     Node_T curr;
 
     assert(path != NULL);
@@ -556,6 +597,7 @@ int FT_destroy(void)
    Returns the next unused index in d after the insertion(s).
 */
 static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
+   /* variable that will traverse the children in the dynArray*/
    size_t c;
 
    assert(d != NULL);
@@ -603,8 +645,13 @@ static void FT_strcatAccumulate(char* str, char* acc)
 
 /* see dt.h for specification */
 char* FT_toString(void) {
+   /* dynArray that will hold all the nodes
+      and their paths*/
    DynArray_T nodes;
+   /* repreents the total size of the char array*/
    size_t totalStrlen = 1;
+   /* variable that has the whole lexicographic
+      tree as a string*/
    char* result = NULL;
 
    if(!isInitialized)
