@@ -36,6 +36,8 @@ struct node {
   void *contents;
 
   /* size_t that contains the length in char of the file*/
+  /* will be -1 if its a directory, and 0 to start with
+     for a  file*/
   size_t fileLength;
 };
 
@@ -97,23 +99,24 @@ Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
    new->parent = parent;
    
    /* if the new node to be created is a File, then set the booleanisFile to true,
-      set the contents and fileLength initially to NULL, and children permamently
+      set the contents and fileLength initially to 0, and children permamently
       to null, conents and fileLength is populated by function Node_populateContents
       
-      if its a  directory, set all file related variables to NULL and children to
+      if its a  directory, set all file related variables to NULL and -1
+      for fileLength and children to
       DynArray_new(0)*/
    if (isFile)
    {
      new->isFile = isFile; /*TRUE*/
      new->contents = NULL;
-     new->fileLength = NULL;
+     new->fileLength = 0;
      new->children = NULL;
    }
    else
    {
       new->isFile = FALSE;
       new->contents = NULL;
-      new->fileLength = NULL;
+      new->fileLength = -1;
       new->children = DynArray_new(0);
       if(new->children == NULL)
       {
@@ -130,7 +133,7 @@ Node_T Node_create(const char* dir, Node_T parent, boolean isFile){
 }
 
 /* see node.h for specification*/
-void *Node_populateContents(Node_T fileNode, void *newContent. size_t newLength)
+void *Node_populateContents(Node_T fileNode, void *newContent, size_t newLength)
 {
   void *oldContents;
 
@@ -217,7 +220,7 @@ size_t Node_getNumChildren(Node_T n)
    assert(n != NULL);
    assert(n->isFile == FALSE);
    assert(n->contents == NULL);
-   assert(n->fileLength == NULL);
+   assert(n->fileLength == -1);
 
    return DynArray_getLength(n->children);
 }
@@ -233,7 +236,7 @@ int Node_hasChild(Node_T n, const char* path, size_t* childID)
    assert(path != NULL);
    assert(n->isFile == FALSE);
    assert(n->contents == NULL);
-   assert(n->fileLength == NULL);
+   assert(n->fileLength == -1);
 
    /* we are assuming the child is a directory, but it doesn't
       matter since it compares the paths*/
@@ -257,7 +260,7 @@ Node_T Node_getChild(Node_T n, size_t childID) {
    assert(n != NULL);
    assert(n->isFile == FALSE);
    assert(n->contents == NULL);
-   assert(n->fileLength == NULL);
+   assert(n->fileLength == -1);
 
    if(DynArray_getLength(n->children) > childID) {
       return DynArray_get(n->children, childID);
@@ -284,7 +287,7 @@ int Node_linkChild(Node_T parent, Node_T child) {
    assert(parent != NULL);
    assert (parent->isFile == FALSE);
    assert(parent->contents == NULL);
-   assert(parent->fileLength == NULL);
+   assert(parent->fileLength == -1);
 
    assert(child != NULL);
 
@@ -367,7 +370,7 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
       /*assert(CheckerDT_Node_isValid(parent));*/
       return PARENT_CHILD_ERROR;
    }
-   if (isFile && inputtedContents != NULL && lengthOfFile != NULL)
+   if ((isFile) && (inputtedContents != NULL) && (lengthOfFile != -1))
    {
      (void)Node_populateContents(new, inputtedContents, lengthOfFile);
    }
@@ -376,7 +379,7 @@ int Node_addChild(Node_T parent, const char* dir, boolean isFile, void *inputted
    result = Node_linkChild(parent, new);
    if(result != SUCCESS)
       (void) Node_destroy(new);
-   else
+   /*else*/
       /*assert(CheckerDT_Node_isValid(new));*/
 
    /*assert(CheckerDT_Node_isValid(parent));*/
@@ -400,7 +403,7 @@ char* Node_toString(Node_T n) {
 }
 
 /* returns the boolean value*/
-boolean checkIsFile(node_T n)
+boolean checkIsFile(Node_T n)
 {
    return n->isFile;
 }
@@ -418,6 +421,16 @@ size_t Node_getFileLength(Node_T n)
    assert(checkIsFile(n) == TRUE);
    return n->fileLength;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
