@@ -290,7 +290,8 @@ boolean FT_containsDir(char* path) {
 
    if(!isInitialized)
       return FALSE;
-
+   /* by default*/
+   result = FALSE;
    curr = FT_traversePath(path);
 
    if(curr == NULL)
