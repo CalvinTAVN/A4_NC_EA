@@ -1,155 +1,168 @@
-/*--------------------------------------------------------------------*/
-/* ft.c                                                               */
-/* Author: Calvin and Alex                                            */
-/*--------------------------------------------------------------------*/
-
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-
-#include "dynarray.h"
-#include "ft.h"
-#include "node.h"
-#include "a4def.h"
-
-/* A Directory Tree is an AO with 3 state variables: */
-/* a flag for if it is in an initialized state (TRUE) or not (FALSE) */
-static boolean isInitialized;
-/* a pointer to the root node in the hierarchy */
-static Node_T root;
-/* a counter of the number of nodes in the hierarchy */
-static size_t count;
+/* /\*--------------------------------------------------------------------------*\/ */
+/* /\*                                                                          *\/ */
+/* /\*ft.c                                                                      *\/ */
+/* /\*Author: Calvin Nguyen and Alex Eng                                        *\/ */
+\*--------------------------------------------------------------------------*\/ */
 
 
 
 
-/*
-   Starting at the parameter curr, traverses as far down
-   the hierarchy as possible while still matching the path
-   parameter.
-   Returns a pointer to the farthest matching node down that path,
-   or NULL if there is no node in curr's hierarchy that matches
-   a prefix of the path
-*/
-static Node_T FT_traversePathFrom(char* path, Node_T curr) {
-   /* Node that represents the farthest down node*/
-   Node_T found;
-   /* Variable used to traverse the DynnArray children*/
-   size_t i;
+/* #include <assert.h> */
+/* #include <string.h> */
+/* #include <stdio.h> */
+/* #include <stddef.h> */
+/* #include <stdlib.h> */
 
-   assert(path != NULL);
+/* #include "dynarray.h" */
+/* #include "ft.h" */
+/* #include "node.h" */
+/* #include "a4def.h" */
 
-   if(curr == NULL)
-      return NULL;
+/* /\* A Directory Tree is an AO with 3 state variables: *\/ */
+/* /\* a flag for if it is in an initialized state (TRUE) or not (FALSE) *\/ */
+/* static boolean isInitialized; */
+/* /\* a pointer to the root node in the hierarchy *\/ */
+/* static Node_T root; */
+/* /\* a counter of the number of nodes in the hierarchy *\/ */
+/* static size_t count; */
 
-   else if(!strcmp(path,Node_getPath(curr)))
-      return curr;
 
-   else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr))))
-   {
-      /* Can only recursively check your children if you are a directory*/
-      if (checkIsFile(curr) == FALSE)
-      {
-         for(i = 0; i < Node_getNumChildren(curr); i++)
-         {
-            found = FT_traversePathFrom(path, Node_getChild(curr, i));
-            if(found != NULL)
-            {
-               return found;
-            }
-         }
-      }
-      return curr;
-   }
-   return NULL;
-}
 
-/*
-   Returns the farthest node reachable from the root following a given
-   path, or NULL if there is no node in the hierarchy that matches a
-   prefix of the path.
-*/
-static Node_T FT_traversePath(char* path)
+
+/* /\* */
+/*    Starting at the parameter curr, traverses as far down */
+/*    the hierarchy as possible while still matching the path */
+/*    parameter. */
+/*    Returns a pointer to the farthest matching node down that path, */
+/*    or NULL if there is no node in curr's hierarchy that matches */
+/*    a prefix of the path */
+/* *\/ */
+/* static Node_T FT_traversePathFrom(char* path, Node_T curr) { */
+
+/*    /\* Node that represents the maximum extension given the path *\/ */
+/*    Node_T found; */
+
+/*    /\* variable used to traverse the children*\/ */
+/*    size_t i; */
+
+/*    assert(path != NULL); */
+
+/*    if(curr == NULL) */
+/*       return NULL; */
+
+/*    /\* if the path perfectly matches the current node, */
+/*       return that node*\/ */
+/*    else if(!strcmp(path,Node_getPath(curr))) */
+/*       return curr; */
+
+/*    /\*else if(checkIsFile(curr) == TRUE) */
+/*      return NULL;*\/ */
+
+/*    else if(!strncmp(path, Node_getPath(curr), strlen(Node_getPath(curr)))) */
+/*    { */
+/*       /\* You can only recursively go into the children if you are a Directory*\/ */
+/*       if (checkIsFile(curr) == FALSE) */
+/*       { */
+/*          for(i = 0; i < Node_getNumChildren(curr); i++) */
+/*          { */
+/*             found = FT_traversePathFrom(path, Node_getChild(curr, i)); */
+/*             if(found != NULL) */
+/*             { */
+/*                return found; */
+/*             } */
+/*          } */
+/*       } */
+/*       return curr; */
+/*    } */
+/*    return NULL; */
+/* } */
+
+/* /\* */
+/*    Returns the farthest node reachable from the root following a given */
+/*    path, or NULL if there is no node in the hierarchy that matches a */
+/*    prefix of the path. */
+/* *\/ */
+/* static Node_T FT_traversePath(char* path) */
+/* { */
+/*    assert(path != NULL); */
+/*    return FT_traversePathFrom(path, root); */
+/* } */
+
+/* /\* */
+/*    Destroys the entire hierarchy of nodes rooted at curr, */
+/*    including curr itself. */
+/* *\/ */
+/* static void FT_removePathFrom(Node_T curr) */
+/* { */
+/*    if(curr != NULL) { */
+/*       count -= Node_destroy(curr); */
+/*    } */
+/* } */
+
+/* /\* */
+/*    Given a prospective parent and child node, */
+/*    adds child to parent's children list, if possible */
+/*    If not possible, destroys the hierarchy rooted at child */
+/*    and returns PARENT_CHILD_ERROR, otherwise, returns SUCCESS. */
+/* *\/ */
+/* static int FT_linkParentToChild(Node_T parent, Node_T child) { */
+
+/*    assert(parent != NULL); */
+/*    assert(checkIsFile(parent) == FALSE); */
+
+/*    if(Node_linkChild(parent, child) != SUCCESS) { */
+/*       (void) Node_destroy(child); */
+/*       return PARENT_CHILD_ERROR; */
+/*    } */
+
+/*    return SUCCESS; */
+/* } */
+
+/* /\* */
+/*    Inserts a new path into the tree rooted at parent, or, if */
+/*    parent is NULL, as the root of the data structure. */
+/*    If a node representing path already exists, returns ALREADY_IN_TREE */
+/*    If there is an allocation error in creating any of the new nodes or */
+/*    their fields, returns MEMORY_ERROR */
+/*    If there is an error linking any of the new nodes, */
+/*    returns PARENT_CHILD_ERROR */
+/*    Otherwise, returns SUCCESS */
+/*    Note* the last 3 parameters determines if the last node in the */
+/*    path is a file or a directory, all preceding nodes are automatically */
+/*    directories. */
+
+/*    if the last child is to be a file, then use the parameters: */
+/*    isFile, contents, and fileLength to properly create a file Node */
+/*    with the proper allocations of properties. */
+/* *\/ */
+/* static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *contents, size_t fileLength) */
 {
-   assert(path != NULL);
-   return FT_traversePathFrom(path, root);
-}
-
-/*
-   Destroys the entire hierarchy of nodes rooted at curr,
-   including curr itself.
-*/
-static void FT_removePathFrom(Node_T curr)
-{
-   if(curr != NULL) {
-      count -= Node_destroy(curr);
-   }
-}
-
-/*
-   Given a prospective parent and child node,
-   adds child to parent's children list, if possible
-   If not possible, destroys the hierarchy rooted at child
-   and returns PARENT_CHILD_ERROR, otherwise, returns SUCCESS.
-*/
-static int FT_linkParentToChild(Node_T parent, Node_T child) {
-
-   assert(parent != NULL);
-   assert(checkIsFile(parent) == FALSE);
-
-   if(Node_linkChild(parent, child) != SUCCESS) {
-      (void) Node_destroy(child);
-      return PARENT_CHILD_ERROR;
-   }
-
-   return SUCCESS;
-}
-
-/*
-   Inserts a new path into the tree rooted at parent, or, if
-   parent is NULL, as the root of the data structure.
-   If a node representing path already exists, returns ALREADY_IN_TREE
-   If there is an allocation error in creating any of the new nodes or
-   their fields, returns MEMORY_ERROR
-   If there is an error linking any of the new nodes,
-   returns PARENT_CHILD_ERROR
-   Otherwise, returns SUCCESS
-   Note* the last 3 parameters determines if the last node in the
-   path is a file or a directory, all preceding nodes are automatically
-   directories.
-   
-   if the last node in the created node is meant to be a file, predefined
-   by the isFile boolean, then use contents and fileLength to populate
-   the last file in the Node
-*/
-static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *contents, size_t fileLength) {
-
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that represents the current node which starts with the parent*/
    Node_T curr = parent;
-   /* represents the first node that was created*/
+   /* Variable that represents the first node that was created*/
    Node_T firstNew = NULL;
-   /* represents the current node being created*/
+   /* Variable that represents the current node being created*/
    Node_T new;
-   /* represents the malloc'd path
-      that will be tokenized*/
+   /* represents the char that will be tokenized to create
+      the nodes*/
    char* copyPath;
-   /* represents the path after the parent node*/
+   /* represents the full path starting from the parent to the 
+      last child */
    char* restPath = path;
    /* represents the token from copypath */
    char* dirToken;
-   /* copy of dirToken to be used to actually
-      create the nodes*/
+   /* copy of dirToken where the nodes
+      path are actually created from */
    char* savedToken;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* represents the success the function*/
    int result;
-   /* amount of newly created nodes*/
+   /* Represents the amount of nodes being created*/
    size_t newCount = 0;
 
    assert(path != NULL);
 
+   /* series of if else statements that check
+      the plausibility of this operation*/
    if(curr == NULL)
    {
       if(root != NULL)
@@ -167,6 +180,7 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       restPath += (strlen(Node_getPath(curr)) + 1);
    }
 
+   /* Checks if the parent is a file or not*/
    if (parent != NULL)
    {
       if (checkIsFile(parent) == TRUE)
@@ -174,8 +188,11 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
          return NOT_A_DIRECTORY;
       }
    }
-   /* will get the rest of the path,
-      and tokenize it*/
+
+   /*assigns copypath to all of the nodes in
+     the rest of path after the parent path
+     that need to be tokenized and created
+     into nodes */
    copyPath = malloc(strlen(restPath)+1);
    if(copyPath == NULL)
       return MEMORY_ERROR;
@@ -188,14 +205,14 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
         /* if the last token is a file,
            create it as a file and allocate
            its contents*/
-      /* will check the token after*/
       savedToken = dirToken;
       dirToken = strtok(NULL, "/");
-      /* if the last token is meant to be a file,
-         create a file node, otherwise, create
-         a directory node*/
+
+      /* The only possibility where the child is a file
+         is at the end of the file and if needed*/
       if (isFile && (dirToken == NULL))
       {
+         /* A child cannot be the child of a file*/
          if (checkIsFile(curr) == TRUE)
          {
             (void)Node_destroy(firstNew);
@@ -220,7 +237,6 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
       }
 
       newCount++;
-
       if(firstNew == NULL)
          firstNew = new;
       else {
@@ -258,12 +274,13 @@ static int FT_insertRestOfPath(char* path, Node_T parent, boolean isFile, void *
 
 
 /* see ft.h for specification */
-int FT_insertDir(char* path) {
-   
-   /* Variable that holds the current Node that will be built off off*/
+int FT_insertDir(char* path)
+{
+   /*Variable that represents the current
+     node to be built upon first */
    Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* Variable that holds the success or result
+      of the function*/
    int result;
 
    assert(path != NULL);
@@ -274,26 +291,29 @@ int FT_insertDir(char* path) {
    curr = FT_traversePath(path);
 
    result = FT_insertRestOfPath(path, curr, FALSE, NULL, 0);
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
 /* see ft.h for specification */
 boolean FT_containsDir(char* path) {
-   
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that holds the starting point
+      node to check after*/
    Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* Prints the result of the function*/
    boolean result;
 
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    assert(path != NULL);
 
    if(!isInitialized)
       return FALSE;
-   /* by default*/
-   result = FALSE;
+
    curr = FT_traversePath(path);
 
+   /* The curr node cannot be null
+      nor a file since it is meant
+      to contain a directory*/
    if(curr == NULL)
       result = FALSE;
    else if (checkIsFile(curr) == TRUE)
@@ -303,6 +323,7 @@ boolean FT_containsDir(char* path) {
    else
       result = TRUE;
 
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
@@ -315,6 +336,7 @@ boolean FT_containsDir(char* path) {
 static int FT_rmDirAt(char* path, Node_T curr)
 {
 
+   /* Variable that holds the parent of the curr node*/
    Node_T parent;
 
    assert(path != NULL);
@@ -324,6 +346,8 @@ static int FT_rmDirAt(char* path, Node_T curr)
 
    parent = Node_getParent(curr);
 
+   /* First unlinks the child from its parent,
+      then removes the entire hierarchy beneath it*/
    if(!strcmp(path,Node_getPath(curr))) {
       if(parent == NULL)
          root = NULL;
@@ -342,10 +366,11 @@ static int FT_rmDirAt(char* path, Node_T curr)
 /* see ft.h for specification */
 int FT_rmDir(char* path)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* variable that represents the node to start
+      removing at*/
    Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* Variable that represents the result or success
+      of the entire function*/
    int result;
 
    assert(path != NULL);
@@ -360,17 +385,18 @@ int FT_rmDir(char* path)
       return NOT_A_DIRECTORY;
    else
       result = FT_rmDirAt(path, curr);
-   
+
    return result;
 }
 
 /* see ft.h for specification*/
 int FT_insertFile(char *path, void *contents, size_t length)
 {
-   /* Variable that holds the current Node that will be built off off*/
-    Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* Variable that represents the node to start
+      inserting from*/
+   Node_T curr;
+   /* Variable that represents the success
+      of the operation*/
    int result;
 
    assert(path != NULL);
@@ -383,8 +409,10 @@ int FT_insertFile(char *path, void *contents, size_t length)
    {
       return CONFLICTING_PATH;
    }
+
    result = FT_insertRestOfPath(path, curr, TRUE, contents, length);
 
+   /* assert(CheckerDT_isValid(isInitialized,root,count)); */
    return result;
 }
 
@@ -395,10 +423,10 @@ int FT_insertFile(char *path, void *contents, size_t length)
 */
 boolean FT_containsFile(char *path)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that represents the node to be checking
+      if it is contained in the file tree*/
     Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+    /* Variable that represents the success of the function*/
    boolean result;
 
    assert(path != NULL);
@@ -430,6 +458,8 @@ boolean FT_containsFile(char *path)
  */
 static int FT_rmFileAt(char* path, Node_T curr) {
 
+   /* variable that represents the curr node's
+      parent*/
    Node_T parent;
 
    assert(path != NULL);
@@ -439,7 +469,7 @@ static int FT_rmFileAt(char* path, Node_T curr) {
    assert(checkIsFile(parent) == FALSE);
 
    /* if the node to be removed is a directory,
-      its not afile*/
+      its not a file*/
    if (checkIsFile(curr) == FALSE)
    {
        return NOT_A_FILE;
@@ -465,10 +495,11 @@ static int FT_rmFileAt(char* path, Node_T curr) {
 */
 int FT_rmFile(char *path)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* variable that represents the curr node to start
+      removing from*/
    Node_T curr;
-   /* represents the variable that will determine
-       the success of the function*/
+   /* Variable that represents the success of the 
+      function*/
    int result;
 
    assert(path != NULL);
@@ -493,7 +524,8 @@ int FT_rmFile(char *path)
 */
 void *FT_getFileContents(char *path)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that represents the current node
+      to receive the contents from*/
     Node_T curr;
 
     assert(path != NULL);
@@ -518,7 +550,8 @@ void *FT_getFileContents(char *path)
 */
 void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that represents the current node to
+      rplace its contents with*/
     Node_T curr;
 
     assert(path != NULL);
@@ -548,7 +581,8 @@ void *FT_replaceFileContents(char *path, void *newContents, size_t newLength)
  */
 int FT_stat(char *path, boolean *type, size_t *length)
 {
-   /* Variable that holds the current Node that will be built off off*/
+   /* Variable that represents the current node
+      from path to get the stats from*/
     Node_T curr;
 
     assert(path != NULL);
@@ -580,24 +614,27 @@ int FT_stat(char *path, boolean *type, size_t *length)
 /* see dt.h for specification */
 int FT_init(void)
 {
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(isInitialized)
       return INITIALIZATION_ERROR;
    isInitialized = 1;
    root = NULL;
    count = 0;
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return SUCCESS;
 }
 
 /* see dt.h for specification */
 int FT_destroy(void)
 {
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    if(!isInitialized)
       return INITIALIZATION_ERROR;
 
    FT_removePathFrom(root);
    root = NULL;
    isInitialized = 0;
-
+   /*assert(CheckerDT_isValid(isInitialized,root,count));*/
    return SUCCESS;
 }
 
@@ -607,7 +644,8 @@ int FT_destroy(void)
    Returns the next unused index in d after the insertion(s).
 */
 static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
-   /* variable that will traverse the children in the dynArray*/
+
+/* variable that is used to traverse the DynArray Children*/
    size_t c;
 
    assert(d != NULL);
@@ -634,6 +672,7 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
 static void FT_strlenAccumulate(char* str, size_t* pAcc)
 {
    assert(pAcc != NULL);
+   assert(str != NULL);
 
    if(str != NULL)
       *pAcc += (strlen(str) + 1);
@@ -647,6 +686,7 @@ static void FT_strlenAccumulate(char* str, size_t* pAcc)
 static void FT_strcatAccumulate(char* str, char* acc)
 {
    assert(acc != NULL);
+   assert(str != NULL);
 
    if(str != NULL)
       strcat(acc, str); strcat(acc, "\n");
@@ -655,14 +695,16 @@ static void FT_strcatAccumulate(char* str, char* acc)
 
 /* see dt.h for specification */
 char* FT_toString(void) {
-   /* dynArray that will hold all the nodes
-      and their paths*/
+   /* DynArray that will hold ALL 
+      the nodes in lexicographic order*/
    DynArray_T nodes;
-   /* repreents the total size of the char array*/
+   /* variable that represents the total amount of
+      string needed*/
    size_t totalStrlen = 1;
-   /* variable that has the whole lexicographic
-      tree as a string*/
+   /* Variable that is the result of the entire display
+      of the lexicographic order of the filetree */
    char* result = NULL;
+
 
    if(!isInitialized)
       return NULL;

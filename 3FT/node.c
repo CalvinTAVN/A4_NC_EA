@@ -230,6 +230,7 @@ int Node_hasChild(Node_T n, const char* path, size_t* childID)
    assert(n->isFile == FALSE);
    assert(n->contents == NULL);
    assert(n->fileLength == 0);
+  
 
    /* we are assuming the child is a directory, but it doesn't
       matter since it compares the paths*/

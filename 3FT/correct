@@ -1,0 +1,79 @@
+Checkpoint 1:
+a
+a/b
+a/b/c
+a/d
+a/d/A
+
+Checkpoint 2:
+a
+a/b
+a/b/c
+a/d
+a/d/A
+a/g
+
+Checkpoint 3:
+a
+a/b
+a/b/c
+a/b/d
+a/b/d/e
+a/b/d/e/e
+a/b/d/e/e/A
+a/d
+a/d/A
+a/g
+
+Checkpoint 4:
+a
+a/b
+a/b/c
+a/b/d
+a/d
+a/d/A
+a/g
+
+Checkpoint 5.1:
+a
+a/y
+
+Checkpoint 5.2:
+a
+a/x
+a/y
+
+Checkpoint 5.3:
+a
+a/x
+a/x/C
+a/y
+
+Checkpoint 5.4:
+a
+a/x
+a/x/B
+a/x/C
+a/y
+
+Checkpoint 5.5:
+a
+a/x
+a/x/B
+a/x/C
+a/y
+a/y/CHILD1DIR
+
+Checkpoint 5.6:
+a
+a/x
+a/x/B
+a/x/C
+a/y
+a/y/CHILD1FILE
+a/y/CHILD2FILE
+a/y/CHILD1DIR
+a/y/CHILD2DIR
+a/y/CHILD2DIR/CHILD4DIR
+a/y/CHILD3DIR
+
