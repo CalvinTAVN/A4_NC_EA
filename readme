@@ -16,7 +16,8 @@ complete the assignment? COPY THE LIST of authorized sources of
 information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
-
+policy list, notes, lectures, office hours, precepts, assignment page
+Lab TA's handout, course instructor
 
 
 ------------------------------------------------------------------------
@@ -26,7 +27,8 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+lectures, precepts, office hours, notes, policy list, assignment page
+Lab TA's, handouts, course instructors
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -40,6 +42,7 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
+None
 
 
 ------------------------------------------------------------------------
@@ -54,25 +57,29 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None
 
 ------------------------------------------------------------------------
 Student 1: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
+kinda helpful, not fun at all
 
 
 ------------------------------------------------------------------------
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+I learned a lot about how file trees work and felt slightly more comfortable
+debugging and testing my code. "It was fun"
 
 ------------------------------------------------------------------------
 (optional) What information can you provide about your submission that
 will help your grader to grade it in the most favorable light? In
 particular, what bugs are in your submission?
 
+We tried our best do the assignment despite both of us getting Covid
+which really inhibitted our work process.
 
 
 ------------------------------------------------------------------------
@@ -81,7 +88,7 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
-
+None
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on checkerDT.c, and what are your
@@ -89,7 +96,9 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
-
+variable names are too short and areas deeply nested. I disagree with these
+errors since most of checkerDT.c is repetitive, checking numerous properties
+and invariants.
 
 ------------------------------------------------------------------------
 What warnings does splint generate on your Part 3 code, and what are
@@ -97,6 +106,12 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
+-variables such as result used before declaration.
+ I disagree with this errors since in those cases, we use a wide array
+ of if  and if else statements that cover all cases.
+-errors where we don't use functions outside of files. I disagree
+with this error since some of these functions were simply created just in
+case we needed to use them such as Node_hasChild or Node_compare.
 
 
 ------------------------------------------------------------------------
@@ -104,6 +119,12 @@ What warnings does critTer generate on your Part 3 code, and what are
 your disagreements with them? Copy the critTer warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
+
+-Validation comments: I disagree with this since some parameters could be
+null such as contents and str or childID. If we asserted them as != NULL,
+we would get errors.
+
+-deeply nested errors: these can't be helped in such a big piece of code.
 
 
 
